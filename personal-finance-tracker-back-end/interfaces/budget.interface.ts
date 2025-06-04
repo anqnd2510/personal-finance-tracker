@@ -1,7 +1,7 @@
-import { Document } from "mongoose";
+import { Document, Types } from "mongoose";
 export interface IBudget extends Document {
-  accountId: string;
-  category: string;
+  accountId: Types.ObjectId;
+  categoryId: Types.ObjectId;
   amount: number;
   startDate: Date;
   endDate: Date;
@@ -10,16 +10,16 @@ export interface IBudget extends Document {
   updatedAt?: Date;
 }
 export interface IBudgetRequest {
-  accountId: string;
-  category: string;
+  accountId: Types.ObjectId;
+  categoryId: Types.ObjectId;
   amount: number;
   startDate: Date;
   endDate: Date;
   limitAmount?: number;
 }
 export interface IBudgetResponse {
-  accountId: string;
-  category: string;
+  accountId: Types.ObjectId;
+  categoryId: Types.ObjectId;
   amount: number;
   startDate: Date;
   endDate: Date;

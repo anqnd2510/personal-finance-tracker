@@ -59,4 +59,26 @@ const router = Router();
  *         description: Internal server error
  */
 router.post("/create-transaction", transactionController.createTransaction);
+/**
+ * @swagger
+ * /api/transactions/{id}:
+ *   get:
+ *     summary: Get a transaction by ID
+ *     tags: [Transactions]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: The ID of the transaction to retrieve
+ *     responses:
+ *       200:
+ *         description: Transaction retrieved successfully
+ *       404:
+ *         description: Transaction not found
+ *       500:
+ *         description: Internal server error
+ */
+router.get("/:id", transactionController.getTransactionById);
 export default router;

@@ -15,3 +15,16 @@ export const createTransaction = async (
     next(err);
   }
 };
+export const getTransactionById = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const { id } = req.params;
+    const response = await service.getTransactionById(id);
+    res.status(response.statusCode).json(response);
+  } catch (err) {
+    next(err);
+  }
+};
