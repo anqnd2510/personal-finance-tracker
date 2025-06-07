@@ -1,6 +1,6 @@
 import mongoose, { Schema } from "mongoose";
 import { IAccount } from "../interfaces/account.interface";
-
+import { Role } from "../constants/role";
 const accountSchema = new Schema<IAccount>(
   {
     email: {
@@ -34,8 +34,8 @@ const accountSchema = new Schema<IAccount>(
     },
     role: {
       type: String,
-      enum: ["user", "admin"],
-      default: "user",
+      enum: Role,
+      default: Role.USER,
     },
   },
   { timestamps: true }

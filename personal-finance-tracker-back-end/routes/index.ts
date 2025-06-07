@@ -1,10 +1,10 @@
 import { Router } from "express";
-import accountRoutes from "./account.route";
+import accountRoutes from "./auth.routes";
 import transactionRoutes from "./transaction.route";
 import categoryRoutes from "./category.route";
 const router = Router();
 
-router.use("/accounts", accountRoutes);
+router.use("/auths", accountRoutes);
 
 router.use("/transactions", transactionRoutes);
 

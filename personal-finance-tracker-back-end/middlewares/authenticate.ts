@@ -1,31 +1,38 @@
 import { Request, Response, NextFunction } from "express";
-import jwt from "jsonwebtoken";
 import { ApiResponse } from "../utils/apiResponse";
-import { JwtAccountPayload } from "../interfaces/auth.interface";
+import { JWTService } from "../utils/jwt";
+
 export const authenticate = (
   req: Request,
   res: Response,
   next: NextFunction
-) => {
-  const token = req.headers.authorization?.split(" ")[1];
-
-  if (!token) {
-    return res
-      .status(401)
-      .json(ApiResponse.error("Unauthorized: No token provided", 401));
-  }
-
+): void => {
   try {
-    const decoded = jwt.verify(
-      token,
-      process.env.JWT_SECRET!
-    ) as JwtAccountPayload;
-    req.account = decoded; // Assuming the decoded token contains account info
+    const authHeader = req.headers.authorization;
+
+    if (!authHeader || !authHeader.startsWith("Bearer ")) {
+      res.status(401).json(ApiResponse.error("Access token is required", 401));
+      return;
+    }
+
+    const token = authHeader.substring(7);
+    const decoded = JWTService.verifyToken(token);
+
+    if (!decoded) {
+      res.status(401).json(ApiResponse.error("Invalid or expired token", 401));
+      return;
+    }
+
+    req.account = {
+      accountId: decoded.accountId,
+      email: decoded.email,
+      role: decoded.role,
+    };
+
     next();
   } catch (error) {
     console.error("Authentication error:", error);
-    return res
-      .status(401)
-      .json(ApiResponse.error("Unauthorized: Invalid token", 401));
+    res.status(401).json(ApiResponse.error("Authentication failed", 401));
+    return;
   }
 };

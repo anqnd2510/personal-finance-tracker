@@ -1,4 +1,6 @@
 import { Document } from "mongoose";
+import { Role } from "../constants/role";
+
 export interface IAccount extends Document {
   email: string;
   password: string;
@@ -7,24 +9,24 @@ export interface IAccount extends Document {
   dob: Date;
   phoneNumber: number;
   isActive?: boolean;
-  role?: "user" | "admin";
+  role?: Role;
   createdAt?: Date;
   updatedAt?: Date;
 }
-export interface IAccountRequest {
+export interface ICreateAccountRequest {
   email: string;
   password: string;
   firstName: string;
   lastName: string;
   dob: Date;
   phoneNumber: number;
+  role?: Role;
 }
-export interface IAccountResponse {
-  email: string;
+
+export interface IUpdateAccountRequest {
   firstName: string;
   lastName: string;
   dob: Date;
   phoneNumber: number;
-  isActive?: boolean;
-  role?: "user" | "admin";
+  updatedAt?: Date;
 }
