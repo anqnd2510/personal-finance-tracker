@@ -1,5 +1,6 @@
 import { Router } from "express";
 import * as transactionController from "../controllers/transaction.controller";
+import { authenticate } from "../middlewares/authenticate";
 const router = Router();
 
 /**
@@ -28,10 +29,6 @@ const router = Router();
  *               - category
  *               - date
  *             properties:
- *               accountId:
- *                 type: string
- *                 format: uuid
- *                 example: 60f6c2d5e1b4e927dcd12345
  *               amount:
  *                 type: number
  *                 example: 100000
@@ -58,7 +55,11 @@ const router = Router();
  *       500:
  *         description: Internal server error
  */
-router.post("/create-transaction", transactionController.createTransaction);
+router.post(
+  "/create-transaction",
+  authenticate,
+  transactionController.createTransaction
+);
 /**
  * @swagger
  * /api/transactions/{id}:
@@ -81,4 +82,20 @@ router.post("/create-transaction", transactionController.createTransaction);
  *         description: Internal server error
  */
 router.get("/:id", transactionController.getTransactionById);
+
+/**
+ * @swagger
+ * /api/transactions:
+ *   get:
+ *     summary: Get all transactions for the authenticated user
+ *     tags: [Transactions]
+ *     responses:
+ *       200:
+ *         description: Transactions retrieved successfully
+ *       401:
+ *         description: Unauthorized
+ *       500:
+ *         description: Internal server error
+ */
+router.get("/", authenticate, transactionController.getTransactionsByAccountId);
 export default router;

@@ -63,4 +63,32 @@ export class TransactionService {
       );
     }
   }
+  /**
+   * Retrieves all transactions for a specific account.
+   * @param {string} accountId - The ID of the account.
+   * @returns {Promise<ApiResponse>} - A promise that resolves to an ApiResponse object.
+   */
+  async getTransactionsByAccountId(accountId: string) {
+    try {
+      const transactions =
+        await this.transactionRepo.findTransactionsByAccountId(accountId);
+      if (!transactions || transactions.length === 0) {
+        return ApiResponse.error(
+          "No transactions found for this account",
+          HTTP_STATUS.NOT_FOUND
+        );
+      }
+      return ApiResponse.success(
+        transactions,
+        "Transactions retrieved successfully",
+        HTTP_STATUS.OK
+      );
+    } catch (error) {
+      console.error("Error in getTransactionsByAccountId method:", error);
+      return ApiResponse.error(
+        "Failed to retrieve transactions",
+        HTTP_STATUS.INTERNAL_SERVER_ERROR
+      );
+    }
+  }
 }

@@ -18,7 +18,7 @@ export class TransactionRepository {
   }
 
   async findTransactionsByAccountId(
-    accountId: Types.ObjectId
+    accountId: string | Types.ObjectId
   ): Promise<ITransaction[]> {
     return await Transaction.find({ accountId });
   }
