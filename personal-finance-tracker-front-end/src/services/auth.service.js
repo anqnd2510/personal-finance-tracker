@@ -17,7 +17,7 @@ export const login = async (credentials) => {
       email: credentials.email,
       password: credentials.password,
     };
-    console.log("Login data to be sent:", loginData);
+
     const response = await apiClient.post(`${AUTH_API_URL}/login`, loginData, {
       headers: {
         "Content-Type": "application/json",
@@ -26,39 +26,30 @@ export const login = async (credentials) => {
 
     console.log("Login API response:", response.data);
 
-    if (response.data.accessToken) {
-      localStorage.setItem("accessToken", response.data.accessToken);
-      localStorage.setItem("refreshToken", response.data.refreshToken);
+    const { data } = response.data; // bóc ra `data` từ response
+    const { account, token } = data;
 
-      // Lưu email người dùng vào localStorage
-      if (credentials.email) {
-        console.log("Lưu email người dùng:", credentials.email);
-        localStorage.setItem("userEmail", credentials.email);
+    if (token) {
+      localStorage.setItem("accessToken", token);
+
+      if (account?.email) {
+        localStorage.setItem("userEmail", account.email);
       }
 
-      // Lưu tên người dùng vào localStorage
-      if (response.data.fullName) {
-        console.log("Lưu tên người dùng từ API:", response.data.fullName);
-        localStorage.setItem("userName", response.data.fullName);
-      } else if (credentials.email === "bob@example.com") {
-        // Hardcode tên cho tài khoản bob@example.com
-        console.log("Lưu tên người dùng hardcode cho bob@example.com");
-        localStorage.setItem("userName", "Bob Chen");
-      } else if (credentials.email) {
-        // Nếu không có fullName, sử dụng email làm tên người dùng
-        const userName = credentials.email.split("@")[0];
-        console.log("Lưu tên người dùng từ email:", userName);
-        localStorage.setItem("userName", userName);
+      const fullName = `${account.firstName ?? ""} ${
+        account.lastName ?? ""
+      }`.trim();
+      if (fullName) {
+        localStorage.setItem("userName", fullName);
       }
 
-      // In ra giá trị đã lưu để debug
-      console.log(
-        "Tên người dùng đã lưu vào localStorage:",
-        localStorage.getItem("userName")
-      );
+      console.log("Tên người dùng đã lưu vào localStorage:", fullName);
     }
 
-    return response.data;
+    return {
+      accessToken: token,
+      ...account, // trả về thông tin account để FE có thể dùng
+    };
   } catch (error) {
     console.error("Error in login:", error);
     throw error;

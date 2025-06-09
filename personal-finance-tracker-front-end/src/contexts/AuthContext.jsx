@@ -3,21 +3,25 @@ import { createContext, useContext, useState } from "react";
 const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
-  const [token, setToken] = useState(localStorage.getItem("token") || null);
+  const [accessToken, setAccessToken] = useState(
+    localStorage.getItem("accessToken") || null
+  );
   const [account, setAccount] = useState(null);
 
   const login = (newToken, accountData) => {
-    setToken(newToken);
+    setAccessToken(newToken);
     setAccount(accountData);
-    localStorage.setItem("token", newToken);
+    localStorage.setItem("accessToken", newToken); // Đồng bộ
   };
+
   const logout = () => {
-    setToken(null);
-    setUser(null);
-    localStorage.removeItem("token");
+    setAccessToken(null);
+    setAccount(null);
+    localStorage.removeItem("accessToken");
   };
+
   return (
-    <AuthContext.Provider value={{ token, account, login, logout }}>
+    <AuthContext.Provider value={{ accessToken, account, login, logout }}>
       {children}
     </AuthContext.Provider>
   );

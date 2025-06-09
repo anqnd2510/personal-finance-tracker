@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { login as loginService } from "../services/auth.service"; // dùng alias
+import { login as loginService } from "../services/auth.service";
 import { useAuth } from "../contexts/AuthContext";
 
 const Login = () => {
@@ -15,14 +15,8 @@ const Login = () => {
     try {
       const data = await loginService({ email, password });
 
-      // Gọi login context để cập nhật state toàn app
-      login(data.accessToken, {
-        email,
-        firstName: data.firstName,
-        lastName: data.lastName,
-      });
-      navigate("/dashboard"); // Chuyển hướng đến trang Dashboard sau khi đăng nhập thành công
-      alert("Đăng nhập thành công!");
+      login(data.accessToken, data.account);
+      navigate("/dashboard", { replace: true });
     } catch (err) {
       alert("Đăng nhập thất bại. Vui lòng kiểm tra lại thông tin.");
       console.error("Login failed:", err);
