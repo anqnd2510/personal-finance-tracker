@@ -5,6 +5,7 @@ import {
   ChevronDownIcon,
 } from "@heroicons/react/24/outline";
 import { useState } from "react";
+import { Link } from "react-router-dom";
 
 const Header = ({ user, onMenuClick, onLogout }) => {
   const [dropdownOpen, setDropdownOpen] = useState(false);
@@ -45,12 +46,12 @@ const Header = ({ user, onMenuClick, onLogout }) => {
                   </p>
                   <p className="text-gray-500">{user?.email}</p>
                 </div>
-                <a
-                  href="/profile"
+                <Link
+                  to="/profile"
                   className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
                 >
                   Profile
-                </a>
+                </Link>
                 <a
                   href="/settings"
                   className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"

@@ -55,3 +55,31 @@ export const login = async (credentials) => {
     throw error;
   }
 };
+
+/**
+ * Hàm lấy thông tin người dùng hiện tại từ API
+ * @returns {Promise} - Promise chứa thông tin người dùng
+ */
+export const getCurrentUser = async () => {
+  try {
+    const accessToken = localStorage.getItem("accessToken");
+
+    if (!accessToken) {
+      console.warn("No access token found for getCurrentUser");
+      return null;
+    }
+
+    const response = await apiClient.get(`${AUTH_API_URL}/profile`, {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${accessToken}`,
+      },
+    });
+
+    console.log("Current user API response:", response.data);
+    return response.data;
+  } catch (error) {
+    console.error("Error in getCurrentUser:", error);
+    throw error;
+  }
+};

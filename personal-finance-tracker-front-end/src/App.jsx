@@ -2,6 +2,8 @@ import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { AuthProvider } from "./contexts/AuthContext";
 import Login from "./pages/Login";
 import Dashboard from "./pages/Dashboard";
+import Profile from "./pages/Profile";
+import Transactions from "./pages/Transactions";
 import { PrivateRoute } from "./routes/PrivateRoute";
 
 const App = () => {
@@ -11,7 +13,6 @@ const App = () => {
         <Routes>
           {/* Public Routes */}
           <Route path="/login" element={<Login />} />
-
           {/* Protected Routes */}
           <Route
             path="/dashboard"
@@ -21,12 +22,20 @@ const App = () => {
               </PrivateRoute>
             }
           />
+          <Route
+            path="/profile"
+            element={
+              <PrivateRoute>
+                <Profile />
+              </PrivateRoute>
+            }
+          />
 
           <Route
             path="/transactions"
             element={
               <PrivateRoute>
-                <div>Transactions Page - Coming Soon</div>
+                <Transactions />
               </PrivateRoute>
             }
           />
