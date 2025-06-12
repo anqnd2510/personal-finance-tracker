@@ -83,3 +83,31 @@ export const getCurrentUser = async () => {
     throw error;
   }
 };
+
+/**
+ * Hàm đăng kí người dùng mới
+ * @param {Object} userData - Thông tin người dùng mới
+ * @return {Promise} - Promise chứa kết quả đăng kí
+ * @throws {Error} - Ném lỗi nếu có vấn đề trong quá trình đăng kí
+ */
+export const register = async (userData) => {
+  try {
+    console.log("Calling register API with userData:", userData);
+
+    const response = await apiClient.post(
+      `${AUTH_API_URL}/register`,
+      userData,
+      {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
+
+    console.log("Register API response:", response.data);
+    return response.data;
+  } catch (error) {
+    console.error("Error in register:", error);
+    throw error;
+  }
+};
