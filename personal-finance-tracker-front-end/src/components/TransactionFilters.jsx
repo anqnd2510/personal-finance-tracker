@@ -1,3 +1,5 @@
+"use client";
+
 import { useState } from "react";
 import { MagnifyingGlassIcon, FunnelIcon } from "@heroicons/react/24/outline";
 
@@ -18,7 +20,7 @@ const TransactionFilters = ({ filters, setFilters, categories }) => {
           </div>
           <input
             type="text"
-            placeholder="Search transactions..."
+            placeholder="Tìm kiếm giao dịch..."
             value={filters.searchQuery}
             onChange={(e) => handleFilterChange("searchQuery", e.target.value)}
             className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md leading-5 bg-white placeholder-gray-500 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
@@ -31,7 +33,7 @@ const TransactionFilters = ({ filters, setFilters, categories }) => {
           className="inline-flex items-center px-3 py-2 border border-gray-300 shadow-sm text-sm leading-4 font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
         >
           <FunnelIcon className="h-4 w-4 mr-2" />
-          {isExpanded ? "Hide Filters" : "Show Filters"}
+          {isExpanded ? "Ẩn bộ lọc" : "Hiện bộ lọc"}
         </button>
       </div>
 
@@ -44,7 +46,7 @@ const TransactionFilters = ({ filters, setFilters, categories }) => {
               htmlFor="type-filter"
               className="block text-sm font-medium text-gray-700 mb-1"
             >
-              Type
+              Loại
             </label>
             <select
               id="type-filter"
@@ -52,9 +54,9 @@ const TransactionFilters = ({ filters, setFilters, categories }) => {
               onChange={(e) => handleFilterChange("type", e.target.value)}
               className="block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-md"
             >
-              <option value="all">All Types</option>
-              <option value="income">Income</option>
-              <option value="expense">Expense</option>
+              <option value="all">Tất cả loại</option>
+              <option value="income">Thu nhập</option>
+              <option value="expense">Chi tiêu</option>
             </select>
           </div>
 
@@ -64,7 +66,7 @@ const TransactionFilters = ({ filters, setFilters, categories }) => {
               htmlFor="date-filter"
               className="block text-sm font-medium text-gray-700 mb-1"
             >
-              Date Range
+              Khoảng thời gian
             </label>
             <select
               id="date-filter"
@@ -72,10 +74,10 @@ const TransactionFilters = ({ filters, setFilters, categories }) => {
               onChange={(e) => handleFilterChange("dateRange", e.target.value)}
               className="block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-md"
             >
-              <option value="all">All Time</option>
-              <option value="today">Today</option>
-              <option value="week">Last 7 Days</option>
-              <option value="month">Last 30 Days</option>
+              <option value="all">Tất cả thời gian</option>
+              <option value="today">Hôm nay</option>
+              <option value="week">7 ngày qua</option>
+              <option value="month">30 ngày qua</option>
             </select>
           </div>
 
@@ -85,7 +87,7 @@ const TransactionFilters = ({ filters, setFilters, categories }) => {
               htmlFor="category-filter"
               className="block text-sm font-medium text-gray-700 mb-1"
             >
-              Category
+              Danh mục
             </label>
             <select
               id="category-filter"
@@ -93,7 +95,7 @@ const TransactionFilters = ({ filters, setFilters, categories }) => {
               onChange={(e) => handleFilterChange("category", e.target.value)}
               className="block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-md"
             >
-              <option value="all">All Categories</option>
+              <option value="all">Tất cả danh mục</option>
               {categories.map((category) => (
                 <option key={category} value={category}>
                   {category}
@@ -108,7 +110,7 @@ const TransactionFilters = ({ filters, setFilters, categories }) => {
               htmlFor="sort-filter"
               className="block text-sm font-medium text-gray-700 mb-1"
             >
-              Sort By
+              Sắp xếp theo
             </label>
             <div className="flex space-x-2">
               <select
@@ -117,8 +119,8 @@ const TransactionFilters = ({ filters, setFilters, categories }) => {
                 onChange={(e) => handleFilterChange("sortBy", e.target.value)}
                 className="block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-md"
               >
-                <option value="date">Date</option>
-                <option value="amount">Amount</option>
+                <option value="date">Ngày</option>
+                <option value="amount">Số tiền</option>
               </select>
               <select
                 value={filters.sortOrder}
@@ -127,8 +129,8 @@ const TransactionFilters = ({ filters, setFilters, categories }) => {
                 }
                 className="block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-md"
               >
-                <option value="desc">Desc</option>
-                <option value="asc">Asc</option>
+                <option value="desc">Giảm dần</option>
+                <option value="asc">Tăng dần</option>
               </select>
             </div>
           </div>

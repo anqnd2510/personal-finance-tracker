@@ -4,12 +4,18 @@ import DashboardLayout from "../layouts/DashboardLayout";
 import TransactionList from "../components/TransactionList";
 import TransactionFilters from "../components/TransactionFilters";
 import TransactionModal from "../components/TransactionModal";
-import { getTransactions } from "../services/transactions.service";
 import { PlusIcon } from "@heroicons/react/24/outline";
+import {
+  getTransactions,
+  createTransaction,
+} from "../services/transactions.service";
+import { getCategories } from "../services/categories.service";
 
 const Transactions = () => {
   const { accessToken } = useAuth();
   const [transactions, setTransactions] = useState([]);
+  const [categories, setCategories] = useState([]);
+  const [categoryMap, setCategoryMap] = useState({});
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -23,103 +29,68 @@ const Transactions = () => {
     searchQuery: "",
   });
 
-  // Mock data for development - replace with API call
-  const mockTransactions = [
-    {
-      _id: "1",
-      description: "Grocery Shopping",
-      amount: -85.32,
-      type: "expense",
-      categoryId: { _id: "c1", name: "Food & Dining" },
-      date: "2024-06-15T10:30:00.000Z",
-      createdAt: "2024-06-15T10:30:00.000Z",
-    },
-    {
-      _id: "2",
-      description: "Salary Deposit",
-      amount: 3500.0,
-      type: "income",
-      categoryId: { _id: "c2", name: "Salary" },
-      date: "2024-06-15T09:00:00.000Z",
-      createdAt: "2024-06-15T09:00:00.000Z",
-    },
-    {
-      _id: "3",
-      description: "Electric Bill",
-      amount: -120.45,
-      type: "expense",
-      categoryId: { _id: "c3", name: "Utilities" },
-      date: "2024-06-14T14:20:00.000Z",
-      createdAt: "2024-06-14T14:20:00.000Z",
-    },
-    {
-      _id: "4",
-      description: "Coffee Shop",
-      amount: -12.5,
-      type: "expense",
-      categoryId: { _id: "c1", name: "Food & Dining" },
-      date: "2024-06-14T08:15:00.000Z",
-      createdAt: "2024-06-14T08:15:00.000Z",
-    },
-    {
-      _id: "5",
-      description: "Freelance Payment",
-      amount: 750.0,
-      type: "income",
-      categoryId: { _id: "c4", name: "Freelance" },
-      date: "2024-06-13T16:45:00.000Z",
-      createdAt: "2024-06-13T16:45:00.000Z",
-    },
-    {
-      _id: "6",
-      description: "Movie Tickets",
-      amount: -35.0,
-      type: "expense",
-      categoryId: { _id: "c5", name: "Entertainment" },
-      date: "2024-06-12T19:30:00.000Z",
-      createdAt: "2024-06-12T19:30:00.000Z",
-    },
-    {
-      _id: "7",
-      description: "Gas Station",
-      amount: -45.75,
-      type: "expense",
-      categoryId: { _id: "c6", name: "Transportation" },
-      date: "2024-06-11T12:15:00.000Z",
-      createdAt: "2024-06-11T12:15:00.000Z",
-    },
-    {
-      _id: "8",
-      description: "Dividend Payment",
-      amount: 120.0,
-      type: "income",
-      categoryId: { _id: "c7", name: "Investments" },
-      date: "2024-06-10T10:00:00.000Z",
-      createdAt: "2024-06-10T10:00:00.000Z",
-    },
-  ];
-
   useEffect(() => {
-    const fetchTransactions = async () => {
+    const fetchData = async () => {
       try {
         setLoading(true);
-        // Replace with actual API call
-        // const response = await getTransactions();
-        // setTransactions(response.data);
+        setError(null);
 
-        // Using mock data for now
-        setTimeout(() => {
-          setTransactions(mockTransactions);
-          setLoading(false);
-        }, 500);
+        // Fetch both transactions and categories
+        const [transactionsResponse, categoriesResponse] = await Promise.all([
+          getTransactions(),
+          getCategories(),
+        ]);
+
+        // Handle transactions response
+        if (
+          transactionsResponse &&
+          transactionsResponse.isSuccess &&
+          Array.isArray(transactionsResponse.data)
+        ) {
+          setTransactions(transactionsResponse.data);
+        } else {
+          console.warn(
+            "Unexpected transactions response format:",
+            transactionsResponse
+          );
+          setTransactions([]);
+        }
+
+        // Handle categories response
+        if (
+          categoriesResponse &&
+          categoriesResponse.isSuccess &&
+          Array.isArray(categoriesResponse.data)
+        ) {
+          setCategories(categoriesResponse.data);
+
+          // Create category mapping for quick lookup
+          const mapping = {};
+          categoriesResponse.data.forEach((category) => {
+            mapping[category._id] = category.name;
+          });
+          setCategoryMap(mapping);
+        } else {
+          console.warn(
+            "Unexpected categories response format:",
+            categoriesResponse
+          );
+          setCategories([]);
+          setCategoryMap({});
+        }
+
+        setLoading(false);
       } catch (err) {
-        console.error("Error fetching transactions:", err);
-        setError("Failed to load transactions");
+        console.error("Error fetching data:", err);
+        setError("Failed to load data");
+        setTransactions([]);
+        setCategories([]);
+        setCategoryMap({});
         setLoading(false);
       }
     };
 
-    fetchTransactions();
+    fetchData();
   }, [accessToken]);
 
   const handleOpenModal = (transaction = null) => {
@@ -135,110 +106,97 @@ const Transactions = () => {
   const handleSaveTransaction = async (transactionData) => {
     try {
       if (transactionData._id) {
-        // Update existing transaction
-        // await apiClient.put(`/transactions/${transactionData._id}`, transactionData, {
-        //   headers: { Authorization: `Bearer ${accessToken}` }
-        // });
-
-        // Update local state
+        // Update existing transaction - just update local state for now
         setTransactions((prev) =>
           prev.map((t) =>
             t._id === transactionData._id ? { ...t, ...transactionData } : t
           )
         );
       } else {
-        // Create new transaction
-        // const response = await apiClient.post('/transactions', transactionData, {
-        //   headers: { Authorization: `Bearer ${accessToken}` }
-        // });
+        // Create new transaction using API
+        const response = await createTransaction(transactionData);
 
-        // Mock response
-        const newTransaction = {
-          _id: `new-${Date.now()}`,
-          ...transactionData,
-          createdAt: new Date().toISOString(),
-        };
-
-        // Update local state
-        setTransactions((prev) => [newTransaction, ...prev]);
+        if (response && response.data) {
+          setTransactions((prev) => [response.data, ...prev]);
+        } else if (response) {
+          setTransactions((prev) => [response, ...prev]);
+        }
       }
 
       handleCloseModal();
     } catch (err) {
       console.error("Error saving transaction:", err);
-      // Handle error (show notification, etc.)
+      setError("Failed to save transaction");
     }
   };
 
   const handleDeleteTransaction = async (id) => {
-    if (window.confirm("Are you sure you want to delete this transaction?")) {
+    if (window.confirm("Bạn có chắc chắn muốn xóa giao dịch này không?")) {
       try {
-        // await apiClient.delete(`/transactions/${id}`, {
-        //   headers: { Authorization: `Bearer ${accessToken}` }
-        // });
-
-        // Update local state
         setTransactions((prev) => prev.filter((t) => t._id !== id));
       } catch (err) {
         console.error("Error deleting transaction:", err);
-        // Handle error (show notification, etc.)
+        setError("Failed to delete transaction");
       }
     }
   };
 
-  const filteredTransactions = transactions.filter((transaction) => {
-    // Filter by type
-    if (filters.type !== "all" && transaction.type !== filters.type) {
-      return false;
-    }
-
-    // Filter by category
-    if (
-      filters.category !== "all" &&
-      transaction.categoryId.name !== filters.category
-    ) {
-      return false;
-    }
-
-    // Filter by date range
-    if (filters.dateRange !== "all") {
-      const transactionDate = new Date(transaction.date);
-      const today = new Date();
-      const startOfToday = new Date(today.setHours(0, 0, 0, 0));
-
-      if (filters.dateRange === "today" && transactionDate < startOfToday) {
-        return false;
-      }
-
-      if (filters.dateRange === "week") {
-        const oneWeekAgo = new Date();
-        oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
-        if (transactionDate < oneWeekAgo) {
+  const filteredTransactions = Array.isArray(transactions)
+    ? transactions.filter((transaction) => {
+        // Filter by type
+        if (filters.type !== "all" && transaction.type !== filters.type) {
           return false;
         }
-      }
 
-      if (filters.dateRange === "month") {
-        const oneMonthAgo = new Date();
-        oneMonthAgo.setMonth(oneMonthAgo.getMonth() - 1);
-        if (transactionDate < oneMonthAgo) {
-          return false;
+        // Filter by category - now using category names
+        if (filters.category !== "all") {
+          const categoryName = categoryMap[transaction.categoryId];
+          if (categoryName !== filters.category) {
+            return false;
+          }
         }
-      }
-    }
 
-    // Filter by search query
-    if (filters.searchQuery) {
-      const query = filters.searchQuery.toLowerCase();
-      return (
-        transaction.description.toLowerCase().includes(query) ||
-        transaction.categoryId.name.toLowerCase().includes(query) ||
-        transaction.amount.toString().includes(query)
-      );
-    }
+        // Filter by date range
+        if (filters.dateRange !== "all") {
+          const transactionDate = new Date(transaction.date);
+          const today = new Date();
+          const startOfToday = new Date(today.setHours(0, 0, 0, 0));
 
-    return true;
-  });
+          if (filters.dateRange === "today" && transactionDate < startOfToday) {
+            return false;
+          }
+
+          if (filters.dateRange === "week") {
+            const oneWeekAgo = new Date();
+            oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
+            if (transactionDate < oneWeekAgo) {
+              return false;
+            }
+          }
+
+          if (filters.dateRange === "month") {
+            const oneMonthAgo = new Date();
+            oneMonthAgo.setMonth(oneMonthAgo.getMonth() - 1);
+            if (transactionDate < oneMonthAgo) {
+              return false;
+            }
+          }
+        }
+
+        // Filter by search query
+        if (filters.searchQuery) {
+          const query = filters.searchQuery.toLowerCase();
+          const categoryName = categoryMap[transaction.categoryId] || "";
+          return (
+            transaction.description?.toLowerCase().includes(query) ||
+            categoryName.toLowerCase().includes(query) ||
+            transaction.amount?.toString().includes(query)
+          );
+        }
+
+        return true;
+      })
+    : [];
 
   // Sort transactions
   const sortedTransactions = [...filteredTransactions].sort((a, b) => {
@@ -255,8 +213,8 @@ const Transactions = () => {
     return 0;
   });
 
-  // Get unique categories for filter dropdown
-  const categories = [...new Set(transactions.map((t) => t.categoryId.name))];
+  // Get unique category names for filter dropdown
+  const categoryNames = categories.map((cat) => cat.name);
 
   return (
     <DashboardLayout>
@@ -264,10 +222,10 @@ const Transactions = () => {
         <div className="flex justify-between items-center">
           <div>
             <h1 className="text-3xl font-bold tracking-tight text-gray-900">
-              Transactions
+              Giao dịch
             </h1>
             <p className="text-gray-600">
-              Manage and track your financial transactions.
+              Quản lý và theo dõi các giao dịch tài chính của bạn.
             </p>
           </div>
           <button
@@ -275,14 +233,14 @@ const Transactions = () => {
             className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
           >
             <PlusIcon className="h-5 w-5 mr-2" />
-            New Transaction
+            Giao dịch mới
           </button>
         </div>
 
         <TransactionFilters
           filters={filters}
           setFilters={setFilters}
-          categories={categories}
+          categories={categoryNames}
         />
 
         {loading ? (
@@ -299,6 +257,7 @@ const Transactions = () => {
         ) : (
           <TransactionList
             transactions={sortedTransactions}
+            categoryMap={categoryMap}
             onEdit={handleOpenModal}
             onDelete={handleDeleteTransaction}
           />

@@ -7,7 +7,7 @@ import {
   ChevronRightIcon,
 } from "@heroicons/react/24/outline";
 
-const TransactionList = ({ transactions, onEdit, onDelete }) => {
+const TransactionList = ({ transactions, categoryMap, onEdit, onDelete }) => {
   const [currentPage, setCurrentPage] = useState(1);
   const [selectedTransaction, setSelectedTransaction] = useState(null);
   const itemsPerPage = 10;
@@ -20,18 +20,29 @@ const TransactionList = ({ transactions, onEdit, onDelete }) => {
   );
 
   const formatDate = (dateString) => {
-    return new Date(dateString).toLocaleDateString("en-US", {
+    return new Date(dateString).toLocaleDateString("vi-VN", {
       year: "numeric",
-      month: "short",
-      day: "numeric",
+      month: "2-digit",
+      day: "2-digit",
     });
   };
 
   const formatTime = (dateString) => {
-    return new Date(dateString).toLocaleTimeString("en-US", {
+    return new Date(dateString).toLocaleTimeString("vi-VN", {
       hour: "2-digit",
       minute: "2-digit",
     });
+  };
+
+  const formatAmount = (amount) => {
+    return Math.abs(amount).toLocaleString("vi-VN", {
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 0,
+    });
+  };
+
+  const getCategoryName = (categoryId) => {
+    return categoryMap[categoryId] || "Chưa phân loại";
   };
 
   const handleViewDetails = (transaction) => {
@@ -48,7 +59,7 @@ const TransactionList = ({ transactions, onEdit, onDelete }) => {
         <div className="p-6">
           <div className="flex items-center justify-between mb-6">
             <h3 className="text-lg font-medium text-gray-900">
-              Transaction Details
+              Chi tiết giao dịch
             </h3>
             <button
               onClick={closeDetails}
@@ -56,7 +67,7 @@ const TransactionList = ({ transactions, onEdit, onDelete }) => {
               aria-label="Close details"
             >
               <span className="text-sm text-blue-600 hover:text-blue-800">
-                Back to list
+                Quay lại danh sách
               </span>
             </button>
           </div>
@@ -64,16 +75,14 @@ const TransactionList = ({ transactions, onEdit, onDelete }) => {
           <div className="border-t border-gray-200 pt-4">
             <dl className="grid grid-cols-1 gap-x-4 gap-y-6 sm:grid-cols-2">
               <div>
-                <dt className="text-sm font-medium text-gray-500">
-                  Description
-                </dt>
+                <dt className="text-sm font-medium text-gray-500">Mô tả</dt>
                 <dd className="mt-1 text-sm text-gray-900">
                   {selectedTransaction.description}
                 </dd>
               </div>
 
               <div>
-                <dt className="text-sm font-medium text-gray-500">Amount</dt>
+                <dt className="text-sm font-medium text-gray-500">Số tiền</dt>
                 <dd
                   className={`mt-1 text-sm font-medium ${
                     selectedTransaction.type === "income"
@@ -81,37 +90,39 @@ const TransactionList = ({ transactions, onEdit, onDelete }) => {
                       : "text-red-600"
                   }`}
                 >
-                  {selectedTransaction.type === "income" ? "+" : "-"}$
-                  {Math.abs(selectedTransaction.amount).toFixed(2)}
+                  {selectedTransaction.type === "income" ? "+" : "-"}
+                  {formatAmount(selectedTransaction.amount)} ₫
                 </dd>
               </div>
 
               <div>
-                <dt className="text-sm font-medium text-gray-500">Category</dt>
+                <dt className="text-sm font-medium text-gray-500">Danh mục</dt>
                 <dd className="mt-1 text-sm text-gray-900">
-                  {selectedTransaction.categoryId.name}
+                  {getCategoryName(selectedTransaction.categoryId)}
                 </dd>
               </div>
 
               <div>
-                <dt className="text-sm font-medium text-gray-500">Type</dt>
+                <dt className="text-sm font-medium text-gray-500">Loại</dt>
                 <dd className="mt-1 text-sm text-gray-900 capitalize">
-                  {selectedTransaction.type}
+                  {selectedTransaction.type === "income"
+                    ? "Thu nhập"
+                    : "Chi tiêu"}
                 </dd>
               </div>
 
               <div>
-                <dt className="text-sm font-medium text-gray-500">Date</dt>
+                <dt className="text-sm font-medium text-gray-500">Ngày</dt>
                 <dd className="mt-1 text-sm text-gray-900">
-                  {formatDate(selectedTransaction.date)} at{" "}
+                  {formatDate(selectedTransaction.date)} lúc{" "}
                   {formatTime(selectedTransaction.date)}
                 </dd>
               </div>
 
               <div>
-                <dt className="text-sm font-medium text-gray-500">Created</dt>
+                <dt className="text-sm font-medium text-gray-500">Tạo lúc</dt>
                 <dd className="mt-1 text-sm text-gray-900">
-                  {formatDate(selectedTransaction.createdAt)} at{" "}
+                  {formatDate(selectedTransaction.createdAt)} lúc{" "}
                   {formatTime(selectedTransaction.createdAt)}
                 </dd>
               </div>
@@ -124,7 +135,7 @@ const TransactionList = ({ transactions, onEdit, onDelete }) => {
               className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
             >
               <PencilIcon className="h-4 w-4 mr-2" />
-              Edit
+              Sửa
             </button>
             <button
               onClick={() => {
@@ -134,7 +145,7 @@ const TransactionList = ({ transactions, onEdit, onDelete }) => {
               className="inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-red-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
             >
               <TrashIcon className="h-4 w-4 mr-2" />
-              Delete
+              Xóa
             </button>
           </div>
         </div>
@@ -148,34 +159,34 @@ const TransactionList = ({ transactions, onEdit, onDelete }) => {
                     scope="col"
                     className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
                   >
-                    Date
+                    Ngày
                   </th>
                   <th
                     scope="col"
                     className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
                   >
-                    Description
+                    Mô tả
                   </th>
                   <th
                     scope="col"
                     className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
                   >
-                    Category
+                    Danh mục
                   </th>
                   <th
                     scope="col"
                     className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
                   >
-                    Amount
+                    Số tiền
                   </th>
                   <th
                     scope="col"
                     className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
                   >
-                    Type
+                    Loại
                   </th>
                   <th scope="col" className="relative px-6 py-3">
-                    <span className="sr-only">Actions</span>
+                    <span className="sr-only">Thao tác</span>
                   </th>
                 </tr>
               </thead>
@@ -186,7 +197,7 @@ const TransactionList = ({ transactions, onEdit, onDelete }) => {
                       colSpan="6"
                       className="px-6 py-4 text-center text-sm text-gray-500"
                     >
-                      No transactions found
+                      Không tìm thấy giao dịch nào
                     </td>
                   </tr>
                 ) : (
@@ -199,7 +210,7 @@ const TransactionList = ({ transactions, onEdit, onDelete }) => {
                         {transaction.description}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                        {transaction.categoryId.name}
+                        {getCategoryName(transaction.categoryId)}
                       </td>
                       <td
                         className={`px-6 py-4 whitespace-nowrap text-sm font-medium ${
@@ -208,8 +219,8 @@ const TransactionList = ({ transactions, onEdit, onDelete }) => {
                             : "text-red-600"
                         }`}
                       >
-                        {transaction.type === "income" ? "+" : "-"}$
-                        {Math.abs(transaction.amount).toFixed(2)}
+                        {transaction.type === "income" ? "+" : "-"}
+                        {formatAmount(transaction.amount)} ₫
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 capitalize">
                         <span
@@ -219,7 +230,9 @@ const TransactionList = ({ transactions, onEdit, onDelete }) => {
                               : "bg-red-100 text-red-800"
                           }`}
                         >
-                          {transaction.type}
+                          {transaction.type === "income"
+                            ? "Thu nhập"
+                            : "Chi tiêu"}
                         </span>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
@@ -260,14 +273,14 @@ const TransactionList = ({ transactions, onEdit, onDelete }) => {
               <div className="hidden sm:flex-1 sm:flex sm:items-center sm:justify-between">
                 <div>
                   <p className="text-sm text-gray-700">
-                    Showing{" "}
-                    <span className="font-medium">{startIndex + 1}</span> to{" "}
+                    Hiển thị{" "}
+                    <span className="font-medium">{startIndex + 1}</span> đến{" "}
                     <span className="font-medium">
                       {Math.min(startIndex + itemsPerPage, transactions.length)}
                     </span>{" "}
-                    of{" "}
+                    trong{" "}
                     <span className="font-medium">{transactions.length}</span>{" "}
-                    results
+                    kết quả
                   </p>
                 </div>
                 <div>
@@ -286,7 +299,7 @@ const TransactionList = ({ transactions, onEdit, onDelete }) => {
                           : "text-gray-500 hover:bg-gray-50 cursor-pointer"
                       }`}
                     >
-                      <span className="sr-only">Previous</span>
+                      <span className="sr-only">Trước</span>
                       <ChevronLeftIcon className="h-5 w-5" aria-hidden="true" />
                     </button>
                     {[...Array(totalPages)].map((_, i) => (
@@ -313,7 +326,7 @@ const TransactionList = ({ transactions, onEdit, onDelete }) => {
                           : "text-gray-500 hover:bg-gray-50 cursor-pointer"
                       }`}
                     >
-                      <span className="sr-only">Next</span>
+                      <span className="sr-only">Sau</span>
                       <ChevronRightIcon
                         className="h-5 w-5"
                         aria-hidden="true"

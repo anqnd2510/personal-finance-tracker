@@ -36,7 +36,8 @@ export const getTransactionById = async (
 };
 export const getTransactionsByAccountId = async (
   req: Request,
-  res: Response
+  res: Response,
+  next: NextFunction
 ) => {
   try {
     const userId = req.account?.accountId;
@@ -47,18 +48,8 @@ export const getTransactionsByAccountId = async (
       return;
     }
     const response = await service.getTransactionsByAccountId(userId);
-    res.json(
-      ApiResponse.success(response, "Transactions retrieved successfully")
-    );
+    res.status(response.statusCode).json(response);
   } catch (error: any) {
-    console.error("Transactions retrieved error:", error);
-    res
-      .status(HTTP_STATUS.INTERNAL_SERVER_ERROR)
-      .json(
-        ApiResponse.error(
-          error.message || "Failed to retrieved transactions",
-          500
-        )
-      );
+    next(error);
   }
 };

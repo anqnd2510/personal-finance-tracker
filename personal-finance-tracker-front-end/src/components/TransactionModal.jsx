@@ -17,19 +17,6 @@ const TransactionModal = ({
   });
   const [errors, setErrors] = useState({});
 
-  // Mock categories if not provided
-  const allCategories = categories?.length
-    ? categories
-    : [
-        "Food & Dining",
-        "Transportation",
-        "Entertainment",
-        "Utilities",
-        "Salary",
-        "Freelance",
-        "Investments",
-      ];
-
   useEffect(() => {
     if (transaction) {
       setFormData({
@@ -37,7 +24,7 @@ const TransactionModal = ({
         description: transaction.description,
         amount: Math.abs(transaction.amount).toString(),
         type: transaction.type,
-        categoryId: transaction.categoryId.name,
+        categoryId: transaction.categoryId,
         date: new Date(transaction.date).toISOString().split("T")[0],
       });
     } else {
@@ -64,21 +51,21 @@ const TransactionModal = ({
   const validateForm = () => {
     const newErrors = {};
     if (!formData.description.trim()) {
-      newErrors.description = "Description is required";
+      newErrors.description = "Vui lòng nhập mô tả";
     }
     if (!formData.amount) {
-      newErrors.amount = "Amount is required";
+      newErrors.amount = "Vui lòng nhập số tiền";
     } else if (
       isNaN(formData.amount) ||
       Number.parseFloat(formData.amount) <= 0
     ) {
-      newErrors.amount = "Amount must be a positive number";
+      newErrors.amount = "Số tiền phải là số dương";
     }
     if (!formData.categoryId) {
-      newErrors.categoryId = "Category is required";
+      newErrors.categoryId = "Vui lòng chọn danh mục";
     }
     if (!formData.date) {
-      newErrors.date = "Date is required";
+      newErrors.date = "Vui lòng chọn ngày";
     }
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -96,8 +83,6 @@ const TransactionModal = ({
       const submissionData = {
         ...formData,
         amount: finalAmount,
-        // In a real app, you'd use the actual category ID
-        categoryId: { name: formData.categoryId, _id: formData.categoryId },
       };
 
       onSave(submissionData);
@@ -128,7 +113,7 @@ const TransactionModal = ({
         <div className="bg-white px-4 pt-5 pb-4 sm:p-6">
           <div className="flex justify-between items-center mb-4">
             <h3 className="text-lg font-medium text-gray-900">
-              {transaction ? "Edit Transaction" : "New Transaction"}
+              {transaction ? "Chỉnh sửa giao dịch" : "Giao dịch mới"}
             </h3>
             <button
               onClick={onClose}
@@ -144,7 +129,7 @@ const TransactionModal = ({
               {/* Transaction Type */}
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Transaction Type
+                  Loại giao dịch
                 </label>
                 <div className="flex space-x-4">
                   <label className="inline-flex items-center">
@@ -156,7 +141,7 @@ const TransactionModal = ({
                       onChange={handleChange}
                       className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300"
                     />
-                    <span className="ml-2 text-sm text-gray-700">Expense</span>
+                    <span className="ml-2 text-sm text-gray-700">Chi tiêu</span>
                   </label>
                   <label className="inline-flex items-center">
                     <input
@@ -167,7 +152,7 @@ const TransactionModal = ({
                       onChange={handleChange}
                       className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300"
                     />
-                    <span className="ml-2 text-sm text-gray-700">Income</span>
+                    <span className="ml-2 text-sm text-gray-700">Thu nhập</span>
                   </label>
                 </div>
               </div>
@@ -178,7 +163,7 @@ const TransactionModal = ({
                   htmlFor="description"
                   className="block text-sm font-medium text-gray-700 mb-1"
                 >
-                  Description
+                  Mô tả
                 </label>
                 <input
                   type="text"
@@ -189,7 +174,7 @@ const TransactionModal = ({
                   className={`block w-full px-3 py-2 border ${
                     errors.description ? "border-red-300" : "border-gray-300"
                   } rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm`}
-                  placeholder="e.g., Grocery shopping"
+                  placeholder="VD: Mua thực phẩm"
                 />
                 {errors.description && (
                   <p className="mt-1 text-sm text-red-600">
@@ -204,11 +189,11 @@ const TransactionModal = ({
                   htmlFor="amount"
                   className="block text-sm font-medium text-gray-700 mb-1"
                 >
-                  Amount
+                  Số tiền
                 </label>
                 <div className="mt-1 relative rounded-md shadow-sm">
                   <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                    <span className="text-gray-500 sm:text-sm">$</span>
+                    <span className="text-gray-500 sm:text-sm">₫</span>
                   </div>
                   <input
                     type="text"
@@ -219,7 +204,7 @@ const TransactionModal = ({
                     className={`block w-full pl-7 pr-12 py-2 border ${
                       errors.amount ? "border-red-300" : "border-gray-300"
                     } rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm`}
-                    placeholder="0.00"
+                    placeholder="0"
                   />
                 </div>
                 {errors.amount && (
@@ -227,13 +212,13 @@ const TransactionModal = ({
                 )}
               </div>
 
-              {/* Category */}
+              {/* Category - Dropdown */}
               <div>
                 <label
                   htmlFor="categoryId"
                   className="block text-sm font-medium text-gray-700 mb-1"
                 >
-                  Category
+                  Danh mục
                 </label>
                 <select
                   id="categoryId"
@@ -244,12 +229,13 @@ const TransactionModal = ({
                     errors.categoryId ? "border-red-300" : "border-gray-300"
                   } rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm`}
                 >
-                  <option value="">Select a category</option>
-                  {allCategories.map((category) => (
-                    <option key={category} value={category}>
-                      {category}
-                    </option>
-                  ))}
+                  <option value="">Chọn danh mục</option>
+                  {Array.isArray(categories) &&
+                    categories.map((category) => (
+                      <option key={category._id} value={category._id}>
+                        {category.name}
+                      </option>
+                    ))}
                 </select>
                 {errors.categoryId && (
                   <p className="mt-1 text-sm text-red-600">
@@ -264,7 +250,7 @@ const TransactionModal = ({
                   htmlFor="date"
                   className="block text-sm font-medium text-gray-700 mb-1"
                 >
-                  Date
+                  Ngày
                 </label>
                 <input
                   type="date"
@@ -287,14 +273,14 @@ const TransactionModal = ({
                 type="submit"
                 className="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-blue-600 text-base font-medium text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 sm:col-start-2 sm:text-sm"
               >
-                {transaction ? "Update" : "Create"}
+                {transaction ? "Cập nhật" : "Tạo mới"}
               </button>
               <button
                 type="button"
                 onClick={onClose}
                 className="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 sm:mt-0 sm:col-start-1 sm:text-sm"
               >
-                Cancel
+                Hủy
               </button>
             </div>
           </form>
