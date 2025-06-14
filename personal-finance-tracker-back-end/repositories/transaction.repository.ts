@@ -33,4 +33,29 @@ export class TransactionRepository {
   async deleteTransaction(id: string): Promise<ITransaction | null> {
     return await Transaction.findByIdAndDelete(id);
   }
+
+  async getTotalExpenses(
+    accountId: Types.ObjectId,
+    categoryId: Types.ObjectId,
+    start: Date,
+    end: Date
+  ) {
+    const result = await Transaction.aggregate([
+      {
+        $match: {
+          accountId,
+          categoryId,
+          type: "expense",
+          date: { $gte: start, $lte: end },
+        },
+      },
+      {
+        $group: {
+          _id: null,
+          total: { $sum: "$amount" },
+        },
+      },
+    ]);
+    return result[0]?.total || 0;
+  }
 }
