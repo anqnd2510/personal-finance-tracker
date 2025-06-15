@@ -85,6 +85,47 @@ router.get("/:id", transactionController.getTransactionById);
 
 /**
  * @swagger
+ * /api/transactions/update-transaction/{id}:
+ *   put:
+ *     summary: Update a transaction by ID
+ *     tags: [Transactions]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: The ID of the transaction to update
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               amount:
+ *                 type: number
+ *                 example: 150000
+ *               type:
+ *                 type: string
+ *                 enum: [income, expense]
+ *                 example: expense
+ *               categoryId:
+ *                 type: string
+ *                 format: uuid
+ *                 example: 60f6c2d5e1b4e927dcd12345
+ *               date:
+ *                 type: string
+ *                 format: date
+ *                 example: 2025-06-15
+ *               description:
+ *                 type: string
+ *                 example: Updated monthly salary
+ */
+router.put("/update-transaction/:id", transactionController.updateTransaction);
+
+/**
+ * @swagger
  * /api/transactions:
  *   get:
  *     summary: Get all transactions for the authenticated user

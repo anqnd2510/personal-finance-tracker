@@ -53,3 +53,17 @@ export const getTransactionsByAccountId = async (
     next(error);
   }
 };
+export const updateTransaction = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const { id } = req.params;
+    const updateData = req.body;
+    const response = await service.updateTransaction(id, updateData);
+    res.status(response.statusCode).json(response);
+  } catch (err) {
+    next(err);
+  }
+};

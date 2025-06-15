@@ -1,5 +1,9 @@
 import Budget from "../models/budget.model";
-import { IBudget, IBudgetRequest } from "../interfaces/budget.interface";
+import {
+  IBudget,
+  IBudgetRequest,
+  IAdjustBudgetAmount,
+} from "../interfaces/budget.interface";
 import { Types } from "mongoose";
 
 export class BudgetRepository {
@@ -23,5 +27,23 @@ export class BudgetRepository {
   }
   async deleteBudget(id: string): Promise<IBudget | null> {
     return await Budget.findByIdAndDelete(id);
+  }
+  async adjustBudgetAmount({
+    accountId,
+    categoryId,
+    date,
+    amount,
+    type,
+  }: IAdjustBudgetAmount): Promise<void> {
+    const budget = await Budget.findOne({
+      accountId,
+      categoryId,
+      startDate: { $lte: date },
+      endDate: { $gte: date },
+    });
+    if (!budget) return;
+    budget.amount += type === "income" ? amount : -amount;
+
+    await budget.save();
   }
 }
