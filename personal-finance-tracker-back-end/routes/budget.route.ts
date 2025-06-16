@@ -81,10 +81,17 @@ router.get("/:id", budgetController.getBudgetById);
 
 /**
  * @swagger
- * /api/budgets/update-budget:
+ * /api/budgets/update-budget/{id}:
  *   put:
  *     summary: Update an existing budget
  *     tags: [Budgets]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: The ID of the budget to update
  *     requestBody:
  *       required: true
  *       content:
@@ -137,18 +144,10 @@ router.delete(
  *       type: object
  *       required:
  *         - categoryId
- *         - startDate
- *         - endDate
  *       properties:
  *         categoryId:
  *           type: string
  *           format: ObjectId
- *         startDate:
- *           type: string
- *           format: date
- *         endDate:
- *           type: string
- *           format: date
  *         limitAmount:
  *           type: number
  *           default: 0

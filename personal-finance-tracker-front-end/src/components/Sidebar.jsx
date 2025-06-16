@@ -1,29 +1,48 @@
+import { useLocation } from "react-router-dom";
+import { useAuth } from "../contexts/AuthContext";
 import {
   HomeIcon,
   CreditCardIcon,
   ChartPieIcon,
-  WalletIcon,
+  BanknotesIcon, // Icon tiền bạc cho Budgets
   CogIcon,
   XMarkIcon,
+  UsersIcon,
+  ShieldCheckIcon,
 } from "@heroicons/react/24/outline";
 
-const navigation = [
-  { name: "Dashboard", href: "/dashboard", icon: HomeIcon, current: true },
-  {
-    name: "Transactions",
-    href: "/transactions",
-    icon: CreditCardIcon,
-    current: false,
-  },
-  { name: "Budgets", href: "/budgets", icon: WalletIcon, current: false },
-  { name: "Analytics", href: "/analytics", icon: ChartPieIcon, current: false },
-  { name: "Settings", href: "/settings", icon: CogIcon, current: false },
-];
-
 const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
+  const location = useLocation();
+  const { user, isAdmin } = useAuth();
+
+  // Base navigation items for all users
+  const baseNavigation = [
+    { name: "Dashboard", href: "/dashboard", icon: HomeIcon },
+    { name: "Transactions", href: "/transactions", icon: CreditCardIcon },
+    { name: "Budgets", href: "/budgets", icon: BanknotesIcon }, // Sử dụng BanknotesIcon
+    { name: "Analytics", href: "/analytics", icon: ChartPieIcon },
+    { name: "Settings", href: "/settings", icon: CogIcon },
+  ];
+
+  // Admin-only navigation items
+  const adminNavigation = [
+    {
+      name: "Quản lý tài khoản",
+      href: "/admin/accounts",
+      icon: UsersIcon,
+      adminOnly: true,
+    },
+  ];
+
+  // Combine navigation based on user role
+  const navigation = isAdmin()
+    ? [...baseNavigation, ...adminNavigation]
+    : baseNavigation;
+
   const isActive = (href) => {
     return location.pathname === href;
   };
+
   return (
     <>
       {/* Mobile sidebar */}
@@ -44,6 +63,38 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
               <XMarkIcon className="h-6 w-6" />
             </button>
           </div>
+
+          {/* User info section for mobile */}
+          {user && (
+            <div className="px-6 py-4 border-b border-gray-200">
+              <div className="flex items-center space-x-3">
+                <div className="flex-shrink-0">
+                  <div className="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center">
+                    <span className="text-white text-sm font-medium">
+                      {user.firstName?.[0] || user.email?.[0] || "U"}
+                    </span>
+                  </div>
+                </div>
+                <div className="flex-1 min-w-0">
+                  <p className="text-sm font-medium text-gray-900 truncate">
+                    {user.firstName} {user.lastName}
+                  </p>
+                  <div className="flex items-center space-x-2">
+                    <p className="text-xs text-gray-500 truncate">
+                      {user.email}
+                    </p>
+                    {isAdmin() && (
+                      <span className="inline-flex items-center px-1.5 py-0.5 rounded-full text-xs font-medium bg-purple-100 text-purple-800">
+                        <ShieldCheckIcon className="w-3 h-3 mr-1" />
+                        Admin
+                      </span>
+                    )}
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+
           <nav className="flex-1 space-y-1 px-3 py-4">
             {navigation.map((item) => (
               <a
@@ -53,10 +104,13 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
                   isActive(item.href)
                     ? "bg-blue-100 text-blue-700"
                     : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"
-                }`}
+                } ${item.adminOnly ? "border-l-2 border-purple-300" : ""}`}
               >
                 <item.icon className="mr-3 h-5 w-5" />
                 {item.name}
+                {item.adminOnly && (
+                  <ShieldCheckIcon className="ml-auto h-4 w-4 text-purple-500" />
+                )}
               </a>
             ))}
           </nav>
@@ -71,6 +125,38 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
               FinanceTracker
             </h2>
           </div>
+
+          {/* User info section for desktop */}
+          {user && (
+            <div className="px-6 py-4 border-b border-gray-200">
+              <div className="flex items-center space-x-3">
+                <div className="flex-shrink-0">
+                  <div className="w-10 h-10 bg-blue-500 rounded-full flex items-center justify-center">
+                    <span className="text-white font-medium">
+                      {user.firstName?.[0] || user.email?.[0] || "U"}
+                    </span>
+                  </div>
+                </div>
+                <div className="flex-1 min-w-0">
+                  <p className="text-sm font-medium text-gray-900 truncate">
+                    {user.firstName} {user.lastName}
+                  </p>
+                  <div className="flex items-center space-x-2">
+                    <p className="text-xs text-gray-500 truncate">
+                      {user.email}
+                    </p>
+                    {isAdmin() && (
+                      <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-purple-100 text-purple-800">
+                        <ShieldCheckIcon className="w-3 h-3 mr-1" />
+                        Admin
+                      </span>
+                    )}
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+
           <nav className="flex-1 space-y-1 px-3 py-4">
             {navigation.map((item) => (
               <a
@@ -80,10 +166,13 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
                   isActive(item.href)
                     ? "bg-blue-100 text-blue-700"
                     : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"
-                }`}
+                } ${item.adminOnly ? "border-l-2 border-purple-300" : ""}`}
               >
                 <item.icon className="mr-3 h-5 w-5" />
                 {item.name}
+                {item.adminOnly && (
+                  <ShieldCheckIcon className="ml-auto h-4 w-4 text-purple-500" />
+                )}
               </a>
             ))}
           </nav>

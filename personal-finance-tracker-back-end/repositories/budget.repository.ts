@@ -31,15 +31,12 @@ export class BudgetRepository {
   async adjustBudgetAmount({
     accountId,
     categoryId,
-    date,
     amount,
     type,
   }: IAdjustBudgetAmount): Promise<void> {
     const budget = await Budget.findOne({
       accountId,
       categoryId,
-      startDate: { $lte: date },
-      endDate: { $gte: date },
     });
     if (!budget) return;
     budget.amount += type === "income" ? amount : -amount;

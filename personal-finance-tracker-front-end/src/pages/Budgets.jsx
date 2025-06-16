@@ -4,7 +4,12 @@ import DashboardLayout from "../layouts/DashboardLayout";
 import BudgetCard from "../components/BudgetCard";
 import BudgetModal from "../components/BudgetModal";
 import { PlusIcon } from "@heroicons/react/24/outline";
-import { getBudgets } from "../services/budgets.service";
+import {
+  getBudgets,
+  createBudget,
+  updateBudget,
+  deleteBudget,
+} from "../services/budgets.service";
 import { getCategories } from "../services/categories.service";
 
 const Budgets = () => {
@@ -91,21 +96,23 @@ const Budgets = () => {
   const handleSaveBudget = async (budgetData) => {
     try {
       if (budgetData._id) {
-        // Update existing budget - just update local state for now
-        setBudgets((prev) =>
-          prev.map((b) =>
-            b._id === budgetData._id ? { ...b, ...budgetData } : b
-          )
-        );
+        // Update existing budget
+        const response = await updateBudget(budgetData._id, budgetData);
+
+        if (response && (response.isSuccess || response.data)) {
+          const updatedBudget = response.data || response;
+          setBudgets((prev) =>
+            prev.map((b) => (b._id === budgetData._id ? updatedBudget : b))
+          );
+        }
       } else {
-        // Create new budget - add to local state for now
-        const newBudget = {
-          ...budgetData,
-          _id: Date.now().toString(), // Temporary ID
-          createdAt: new Date().toISOString(),
-          updatedAt: new Date().toISOString(),
-        };
-        setBudgets((prev) => [newBudget, ...prev]);
+        // Create new budget
+        const response = await createBudget(budgetData);
+
+        if (response && (response.isSuccess || response.data)) {
+          const newBudget = response.data || response;
+          setBudgets((prev) => [newBudget, ...prev]);
+        }
       }
 
       handleCloseModal();
@@ -118,7 +125,13 @@ const Budgets = () => {
   const handleDeleteBudget = async (id) => {
     if (window.confirm("Bạn có chắc chắn muốn xóa ngân sách này không?")) {
       try {
-        setBudgets((prev) => prev.filter((b) => b._id !== id));
+        const response = await deleteBudget(id);
+
+        if (response && response.isSuccess !== false) {
+          setBudgets((prev) => prev.filter((b) => b._id !== id));
+        } else {
+          setError("Không thể xóa ngân sách");
+        }
       } catch (err) {
         console.error("Error deleting budget:", err);
         setError("Không thể xóa ngân sách");

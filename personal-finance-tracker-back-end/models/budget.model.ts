@@ -17,14 +17,6 @@ const budgetSchema = new Schema<IBudget>(
       type: Number,
       default: 0,
     },
-    startDate: {
-      type: Date,
-      required: true,
-    },
-    endDate: {
-      type: Date,
-      required: true,
-    },
     limitAmount: {
       type: Number,
       default: 0,

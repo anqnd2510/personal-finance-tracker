@@ -27,7 +27,7 @@ const Login = () => {
     phoneNumber: "",
   });
 
-  const { login } = useAuth();
+  const { login, getDefaultRedirectPath } = useAuth();
   const navigate = useNavigate();
 
   const handleLoginChange = (e) => {
@@ -49,8 +49,21 @@ const Login = () => {
 
     try {
       const data = await loginService(loginData);
-      login(data.accessToken, data.account);
-      navigate("/dashboard", { replace: true });
+
+      if (data && data.accessToken) {
+        const userInfo = login(data.accessToken, data.account);
+
+        if (userInfo) {
+          // Get redirect path based on user role
+          const redirectPath = getDefaultRedirectPath();
+          console.log("Redirecting to:", redirectPath);
+          navigate(redirectPath, { replace: true });
+        } else {
+          setError("Đăng nhập thất bại. Token không hợp lệ.");
+        }
+      } else {
+        setError("Đăng nhập thất bại. Vui lòng kiểm tra lại thông tin.");
+      }
     } catch (err) {
       setError("Đăng nhập thất bại. Vui lòng kiểm tra lại thông tin.");
       console.error("Login failed:", err);
@@ -94,7 +107,7 @@ const Login = () => {
     <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-md w-full space-y-8">
         <div>
-          <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900 cursor-pointer">
+          <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
             {isLogin ? "Đăng nhập vào tài khoản" : "Tạo tài khoản mới"}
           </h2>
           <p className="mt-2 text-center text-sm text-gray-600">
@@ -105,7 +118,7 @@ const Login = () => {
                 setIsLogin(!isLogin);
                 setError("");
               }}
-              className="font-medium text-blue-600 hover:text-blue-500 cursor-pointer"
+              className="font-medium text-blue-600 hover:text-blue-500"
             >
               {isLogin ? "tạo tài khoản mới" : "đăng nhập vào tài khoản có sẵn"}
             </button>
@@ -291,7 +304,7 @@ const Login = () => {
                   htmlFor="dob"
                   className="block text-sm font-medium text-gray-700"
                 >
-                  Ngày tháng năm sinh
+                  Ngày sinh
                 </label>
                 <div className="mt-1">
                   <input

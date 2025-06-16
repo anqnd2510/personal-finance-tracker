@@ -31,7 +31,6 @@ export class TransactionService {
       await this.budgetRepo.adjustBudgetAmount({
         accountId: transaction.accountId,
         categoryId: transaction.categoryId,
-        date: transaction.date,
         amount: transaction.amount,
         type: transaction.type,
       });
@@ -126,7 +125,6 @@ export class TransactionService {
       await this.budgetRepo.adjustBudgetAmount({
         accountId: existing.accountId,
         categoryId: existing.categoryId,
-        date: existing.date,
         amount: -existing.amount, // Reverse
         type: existing.type,
       });
@@ -146,7 +144,6 @@ export class TransactionService {
       await this.budgetRepo.adjustBudgetAmount({
         accountId: updated.accountId,
         categoryId: updated.categoryId,
-        date: updated.date,
         amount: updated.amount,
         type: updated.type,
       });
