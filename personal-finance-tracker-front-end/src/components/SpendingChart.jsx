@@ -1,12 +1,12 @@
 const SpendingChart = () => {
   // Mock data for the chart
   const data = [
-    { month: "Jan", income: 4000, expenses: 2400 },
-    { month: "Feb", income: 3000, expenses: 1398 },
-    { month: "Mar", income: 2000, expenses: 2800 },
-    { month: "Apr", income: 2780, expenses: 3908 },
-    { month: "May", income: 1890, expenses: 4800 },
-    { month: "Jun", income: 2390, expenses: 3800 },
+    { month: "Tháng 1", income: 4000, expenses: 2400 },
+    { month: "Tháng 2", income: 3000, expenses: 1398 },
+    { month: "Tháng 3", income: 2000, expenses: 2800 },
+    { month: "Tháng 4", income: 2780, expenses: 3908 },
+    { month: "Tháng 5", income: 1890, expenses: 4800 },
+    { month: "Tháng 6", income: 2390, expenses: 3800 },
   ];
 
   const maxValue = Math.max(...data.flatMap((d) => [d.income, d.expenses]));
@@ -15,7 +15,7 @@ const SpendingChart = () => {
     <div className="bg-white shadow rounded-lg">
       <div className="px-4 py-5 sm:p-6">
         <h3 className="text-lg font-medium text-gray-900 mb-4">
-          Income vs Expenses
+          Thu nhập vs Chi tiêu
         </h3>
         <div className="space-y-4">
           {data.map((item, index) => (
@@ -25,11 +25,11 @@ const SpendingChart = () => {
                 <div className="flex space-x-4 text-xs">
                   <span className="flex items-center">
                     <div className="w-3 h-3 bg-green-500 rounded-full mr-1"></div>
-                    Income: ${item.income.toLocaleString()}
+                    Thu nhập: {item.income.toLocaleString("vi-VN")} ₫
                   </span>
                   <span className="flex items-center">
                     <div className="w-3 h-3 bg-red-500 rounded-full mr-1"></div>
-                    Expenses: ${item.expenses.toLocaleString()}
+                    Chi tiêu: {item.expenses.toLocaleString("vi-VN")} ₫
                   </span>
                 </div>
               </div>

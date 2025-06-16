@@ -3,7 +3,7 @@ import {
   ArrowDownIcon,
   BanknotesIcon,
   ArrowTrendingUpIcon,
-  CreditCardIcon,
+  CurrencyDollarIcon,
   WalletIcon,
 } from "@heroicons/react/24/outline";
 
@@ -12,32 +12,32 @@ const OverviewCards = ({ stats }) => {
 
   const cards = [
     {
-      name: "Total Balance",
-      value: `$${stats.totalBalance?.toLocaleString() || "0.00"}`,
+      name: "Tổng số dư",
+      value: `${stats.totalBalance?.toLocaleString("vi-VN") || "0"} ₫`,
       change: "+2.5%",
       changeType: "positive",
       icon: WalletIcon,
     },
     {
-      name: "Monthly Income",
-      value: `$${stats.monthlyIncome?.toLocaleString() || "0.00"}`,
+      name: "Thu nhập tháng",
+      value: `${stats.monthlyIncome?.toLocaleString("vi-VN") || "0"} ₫`,
       change: "+12.3%",
       changeType: "positive",
       icon: ArrowTrendingUpIcon,
     },
     {
-      name: "Monthly Expenses",
-      value: `$${stats.monthlyExpenses?.toLocaleString() || "0.00"}`,
+      name: "Chi tiêu tháng",
+      value: `${stats.monthlyExpenses?.toLocaleString("vi-VN") || "0"} ₫`,
       change: "-5.2%",
       changeType: "negative",
       icon: BanknotesIcon,
     },
     {
-      name: "Budget Remaining",
-      value: `$${stats.budgetRemaining?.toLocaleString() || "0.00"}`,
-      change: "68% left",
+      name: "Ngân sách còn lại",
+      value: `${stats.budgetRemaining?.toLocaleString("vi-VN") || "0"} ₫`,
+      change: "68% còn lại",
       changeType: "neutral",
-      icon: CreditCardIcon,
+      icon: CurrencyDollarIcon,
     },
   ];
 
@@ -83,7 +83,7 @@ const OverviewCards = ({ stats }) => {
                 {card.change}
               </span>
               {card.changeType !== "neutral" && (
-                <span className="ml-1 text-gray-500">from last month</span>
+                <span className="ml-1 text-gray-500">so với tháng trước</span>
               )}
             </div>
           </div>

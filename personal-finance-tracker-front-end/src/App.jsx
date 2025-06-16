@@ -4,6 +4,7 @@ import Login from "./pages/Login";
 import Dashboard from "./pages/Dashboard";
 import Profile from "./pages/Profile";
 import Transactions from "./pages/Transactions";
+import Budgets from "./pages/Budgets";
 import { PrivateRoute } from "./routes/PrivateRoute";
 
 const App = () => {
@@ -44,7 +45,7 @@ const App = () => {
             path="/budgets"
             element={
               <PrivateRoute>
-                <div>Budgets Page - Coming Soon</div>
+                <Budgets />
               </PrivateRoute>
             }
           />

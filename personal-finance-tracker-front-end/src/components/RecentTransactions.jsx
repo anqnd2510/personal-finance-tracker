@@ -10,20 +10,20 @@ const RecentTransactions = ({ transactions = [] }) => {
       <div className="px-4 py-5 sm:p-6">
         <div className="flex items-center justify-between mb-4">
           <h3 className="text-lg font-medium text-gray-900">
-            Recent Transactions
+            Giao dịch gần đây
           </h3>
           <a
             href="/transactions"
             className="text-sm text-blue-600 hover:text-blue-500"
           >
-            View all →
+            Xem tất cả →
           </a>
         </div>
 
         <div className="space-y-4">
           {transactions.length === 0 ? (
             <p className="text-gray-500 text-center py-4">
-              No transactions found
+              Không tìm thấy giao dịch nào
             </p>
           ) : (
             transactions.slice(0, 5).map((transaction) => (
@@ -51,10 +51,10 @@ const RecentTransactions = ({ transactions = [] }) => {
                     </p>
                     <div className="flex items-center space-x-2">
                       <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-gray-100 text-gray-800">
-                        {transaction.categoryId?.name || "Uncategorized"}
+                        {transaction.categoryId?.name || "Chưa phân loại"}
                       </span>
                       <span className="text-xs text-gray-500">
-                        {new Date(transaction.date).toLocaleDateString()}
+                        {new Date(transaction.date).toLocaleDateString("vi-VN")}
                       </span>
                     </div>
                   </div>
@@ -67,8 +67,8 @@ const RecentTransactions = ({ transactions = [] }) => {
                         : "text-red-600"
                     }`}
                   >
-                    {transaction.type === "income" ? "+" : ""}$
-                    {Math.abs(transaction.amount).toFixed(2)}
+                    {transaction.type === "income" ? "+" : ""}
+                    {Math.abs(transaction.amount).toLocaleString("vi-VN")} ₫
                   </span>
                   <button className="text-gray-400 hover:text-gray-600">
                     <EllipsisHorizontalIcon className="h-4 w-4" />

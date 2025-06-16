@@ -1,25 +1,10 @@
 const CategoryBreakdown = () => {
   const categories = [
-    {
-      name: "Food & Dining",
-      amount: 450,
-      percentage: 35,
-      color: "bg-blue-500",
-    },
-    {
-      name: "Transportation",
-      amount: 180,
-      percentage: 14,
-      color: "bg-green-500",
-    },
-    {
-      name: "Entertainment",
-      amount: 320,
-      percentage: 25,
-      color: "bg-purple-500",
-    },
-    { name: "Utilities", amount: 200, percentage: 16, color: "bg-orange-500" },
-    { name: "Shopping", amount: 130, percentage: 10, color: "bg-pink-500" },
+    { name: "Ăn uống", amount: 450, percentage: 35, color: "bg-blue-500" },
+    { name: "Di chuyển", amount: 180, percentage: 14, color: "bg-green-500" },
+    { name: "Giải trí", amount: 320, percentage: 25, color: "bg-purple-500" },
+    { name: "Tiện ích", amount: 200, percentage: 16, color: "bg-orange-500" },
+    { name: "Mua sắm", amount: 130, percentage: 10, color: "bg-pink-500" },
   ];
 
   const total = categories.reduce((sum, cat) => sum + cat.amount, 0);
@@ -28,7 +13,7 @@ const CategoryBreakdown = () => {
     <div className="bg-white shadow rounded-lg">
       <div className="px-4 py-5 sm:p-6">
         <h3 className="text-lg font-medium text-gray-900 mb-4">
-          Spending by Category
+          Chi tiêu theo danh mục
         </h3>
 
         <div className="space-y-4">
@@ -37,8 +22,10 @@ const CategoryBreakdown = () => {
             <div className="w-full h-full rounded-full bg-gradient-to-r from-blue-500 via-green-500 via-purple-500 via-orange-500 to-pink-500"></div>
             <div className="absolute inset-4 bg-white rounded-full flex items-center justify-center">
               <div className="text-center">
-                <div className="text-lg font-bold text-gray-900">${total}</div>
-                <div className="text-xs text-gray-500">Total</div>
+                <div className="text-lg font-bold text-gray-900">
+                  {total.toLocaleString("vi-VN")} ₫
+                </div>
+                <div className="text-xs text-gray-500">Tổng</div>
               </div>
             </div>
           </div>
@@ -57,7 +44,7 @@ const CategoryBreakdown = () => {
                 </div>
                 <div className="text-right">
                   <div className="text-sm font-medium text-gray-900">
-                    ${category.amount}
+                    {category.amount.toLocaleString("vi-VN")} ₫
                   </div>
                   <div className="text-xs text-gray-500">
                     {category.percentage}%

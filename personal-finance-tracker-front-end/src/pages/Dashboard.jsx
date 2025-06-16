@@ -29,25 +29,25 @@ const Dashboard = () => {
           transactions: [
             {
               _id: "1",
-              description: "Grocery Shopping",
+              description: "Mua thực phẩm",
               amount: -85.32,
               type: "expense",
-              categoryId: { name: "Food & Dining" },
+              categoryId: { name: "Ăn uống" },
               date: "2024-01-15",
             },
             {
               _id: "2",
-              description: "Salary Deposit",
+              description: "Lương tháng",
               amount: 3500.0,
               type: "income",
-              categoryId: { name: "Salary" },
+              categoryId: { name: "Lương" },
               date: "2024-01-15",
             },
           ],
           budgets: [
             {
               _id: "1",
-              categoryId: { name: "Food & Dining" },
+              categoryId: { name: "Ăn uống" },
               amount: 450,
               limitAmount: 600,
             },
@@ -82,10 +82,10 @@ const Dashboard = () => {
       <div className="space-y-6">
         <div>
           <h1 className="text-3xl font-bold tracking-tight text-gray-900">
-            Dashboard
+            Bảng điều khiển
           </h1>
           <p className="text-gray-600">
-            Welcome back! Here's your financial overview.
+            Chào mừng bạn trở lại! Đây là tổng quan tài chính của bạn.
           </p>
         </div>
 
