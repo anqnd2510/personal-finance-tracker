@@ -249,12 +249,6 @@ const AdminAccounts = () => {
             <p className="text-gray-600">
               Quản lý tất cả tài khoản người dùng trong hệ thống.
             </p>
-            {/* Debug info */}
-            <div className="mt-2 text-xs text-gray-500">
-              <p>Total accounts loaded: {accounts.length}</p>
-              <p>Loading: {loading ? "true" : "false"}</p>
-              <p>Error: {error || "none"}</p>
-            </div>
           </div>
           <button
             onClick={() => handleOpenModal()}
