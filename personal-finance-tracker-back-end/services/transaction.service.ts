@@ -3,6 +3,7 @@ import { ApiResponse } from "../utils/apiResponse";
 import { TransactionRepository } from "../repositories/transaction.repository";
 import { BudgetRepository } from "../repositories/budget.repository";
 import { ITransactionRequest } from "interfaces/transaction.interface";
+import { Types } from "mongoose";
 
 export class TransactionService {
   constructor(
@@ -10,12 +11,6 @@ export class TransactionService {
     private budgetRepo = new BudgetRepository()
   ) {}
 
-  /**
-   * Creates a new transaction.
-   * @param {ITransactionRequest} transactionData - The data for the transaction.
-   * @returns {Promise<ApiResponse>} - A promise that resolves to an ApiResponse object.
-   * @throws {Error} - Throws an error if the transaction creation fails.
-   */
   async createTransaction(transactionData: ITransactionRequest) {
     try {
       const transaction = await this.transactionRepo.createTransaction(
@@ -27,15 +22,21 @@ export class TransactionService {
           HTTP_STATUS.INTERNAL_SERVER_ERROR
         );
       }
-      // Adjust the budget amount if the transaction is related to a budget
+
       await this.budgetRepo.adjustBudgetAmount({
         accountId: transaction.accountId,
         categoryId: transaction.categoryId,
         amount: transaction.amount,
         type: transaction.type,
       });
+
+      const budgetStatus = await this.getBudgetStatus(
+        transaction.accountId.toString(),
+        transaction.categoryId.toString()
+      );
+
       return ApiResponse.success(
-        transaction,
+        { transaction, budgetStatus: budgetStatus || undefined },
         "Transaction created",
         HTTP_STATUS.CREATED
       );
@@ -47,11 +48,113 @@ export class TransactionService {
       );
     }
   }
-  /**
-   * Retrieves a transaction by its ID.
-   * @param {string} id - The ID of the transaction.
-   * @returns {Promise<ApiResponse>} - A promise that resolves to an ApiResponse object.
-   */
+
+  async updateTransaction(
+    id: string,
+    updateData: Partial<ITransactionRequest>
+  ) {
+    try {
+      const existing = await this.transactionRepo.findTransactionById(id);
+      if (!existing) {
+        return ApiResponse.error(
+          "Transaction not found",
+          HTTP_STATUS.NOT_FOUND
+        );
+      }
+
+      await this.budgetRepo.adjustBudgetAmount({
+        accountId: existing.accountId,
+        categoryId: existing.categoryId,
+        amount: -existing.amount,
+        type: existing.type,
+      });
+
+      const updated = await this.transactionRepo.updateTransaction(
+        id,
+        updateData
+      );
+      if (!updated) {
+        return ApiResponse.error(
+          "Failed to update transaction",
+          HTTP_STATUS.INTERNAL_SERVER_ERROR
+        );
+      }
+
+      await this.budgetRepo.adjustBudgetAmount({
+        accountId: updated.accountId,
+        categoryId: updated.categoryId,
+        amount: updated.amount,
+        type: updated.type,
+      });
+
+      const budgetStatus = await this.getBudgetStatus(
+        updated.accountId.toString(),
+        updated.categoryId.toString()
+      );
+
+      return ApiResponse.success(
+        { transaction: updated, budgetStatus: budgetStatus || undefined },
+        "Transaction updated successfully",
+        HTTP_STATUS.OK
+      );
+    } catch (error) {
+      console.error("Error in updateTransaction method:", error);
+      return ApiResponse.error(
+        "Failed to update transaction",
+        HTTP_STATUS.INTERNAL_SERVER_ERROR
+      );
+    }
+  }
+
+  private async getBudgetStatus(accountId: string, categoryId: string) {
+    const budget = await this.budgetRepo.findByAccountAndCategory(
+      new Types.ObjectId(accountId),
+      new Types.ObjectId(categoryId)
+    );
+
+    if (!budget || budget.limitAmount === 0) return null;
+
+    const updatedBudget = await this.budgetRepo.resetBudgetIfNeeded(budget);
+
+    const spent = updatedBudget.amount;
+    const limit = updatedBudget.limitAmount;
+    const remaining = Math.max(0, limit - spent);
+    const percentage = (spent / limit) * 100;
+    const periodEnd = this.budgetRepo.getPeriodEndDate(
+      updatedBudget.period,
+      updatedBudget.periodStartDate
+    );
+
+    let status: "safe" | "warning" | "exceeded";
+    let warning: string | null = null;
+
+    if (percentage >= 100) {
+      status = "exceeded";
+      warning = `⚠️ Budget exceeded! You've spent ${spent.toLocaleString()} out of ${limit.toLocaleString()} (${percentage.toFixed(
+        1
+      )}%) for this ${updatedBudget.period}.`;
+    } else if (percentage >= 80) {
+      status = "warning";
+      warning = `⚠️ Budget warning! You've spent ${spent.toLocaleString()} out of ${limit.toLocaleString()} (${percentage.toFixed(
+        1
+      )}%) for this ${
+        updatedBudget.period
+      }. ${remaining.toLocaleString()} remaining.`;
+    } else {
+      status = "safe";
+    }
+
+    return {
+      warning,
+      percentage: Math.round(percentage * 100) / 100,
+      spent,
+      limit,
+      remaining,
+      status,
+      periodEnd,
+    };
+  }
+
   async getTransactionById(id: string) {
     try {
       const transaction = await this.transactionRepo.findTransactionById(id);
@@ -74,11 +177,7 @@ export class TransactionService {
       );
     }
   }
-  /**
-   * Retrieves all transactions for a specific account.
-   * @param {string} accountId - The ID of the account.
-   * @returns {Promise<ApiResponse>} - A promise that resolves to an ApiResponse object.
-   */
+
   async getTransactionsByAccountId(accountId: string) {
     try {
       const transactions =
@@ -98,65 +197,6 @@ export class TransactionService {
       console.error("Error in getTransactionsByAccountId method:", error);
       return ApiResponse.error(
         "Failed to retrieve transactions",
-        HTTP_STATUS.INTERNAL_SERVER_ERROR
-      );
-    }
-  }
-  /**
-   * Updates a transaction by its ID.
-   * @param {string} id - The ID of the transaction.
-   * @param {Partial<ITransactionRequest>} updateData - The data to update the transaction with.
-   * @returns {Promise<ApiResponse>} - A promise that resolves to an ApiResponse object.
-   */
-  async updateTransaction(
-    id: string,
-    updateData: Partial<ITransactionRequest>
-  ) {
-    try {
-      const existing = await this.transactionRepo.findTransactionById(id);
-      if (!existing) {
-        return ApiResponse.error(
-          "Transaction not found",
-          HTTP_STATUS.NOT_FOUND
-        );
-      }
-
-      // Rollback old transaction from budget
-      await this.budgetRepo.adjustBudgetAmount({
-        accountId: existing.accountId,
-        categoryId: existing.categoryId,
-        amount: -existing.amount, // Reverse
-        type: existing.type,
-      });
-
-      const updated = await this.transactionRepo.updateTransaction(
-        id,
-        updateData
-      );
-      if (!updated) {
-        return ApiResponse.error(
-          "Failed to update transaction",
-          HTTP_STATUS.INTERNAL_SERVER_ERROR
-        );
-      }
-
-      // Apply new transaction effect to budget
-      await this.budgetRepo.adjustBudgetAmount({
-        accountId: updated.accountId,
-        categoryId: updated.categoryId,
-        amount: updated.amount,
-        type: updated.type,
-      });
-
-      return ApiResponse.success(
-        updated,
-        "Transaction updated successfully",
-        HTTP_STATUS.OK
-      );
-    } catch (error) {
-      console.error("Error in updateTransaction method:", error);
-      return ApiResponse.error(
-        "Failed to update transaction",
         HTTP_STATUS.INTERNAL_SERVER_ERROR
       );
     }

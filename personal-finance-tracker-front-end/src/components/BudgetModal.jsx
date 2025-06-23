@@ -5,6 +5,7 @@ const BudgetModal = ({ isOpen, onClose, onSave, budget, categories }) => {
   const [formData, setFormData] = useState({
     categoryId: "",
     limitAmount: "",
+    period: "monthly",
   });
   const [errors, setErrors] = useState({});
 
@@ -14,11 +15,13 @@ const BudgetModal = ({ isOpen, onClose, onSave, budget, categories }) => {
         _id: budget._id,
         categoryId: budget.categoryId,
         limitAmount: budget.limitAmount.toString(),
+        period: budget.period || "monthly",
       });
     } else {
       setFormData({
         categoryId: "",
         limitAmount: "",
+        period: "monthly",
       });
     }
     setErrors({});
@@ -27,7 +30,6 @@ const BudgetModal = ({ isOpen, onClose, onSave, budget, categories }) => {
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
-    // Clear error when field is edited
     if (errors[name]) {
       setErrors((prev) => ({ ...prev, [name]: "" }));
     }
@@ -46,6 +48,9 @@ const BudgetModal = ({ isOpen, onClose, onSave, budget, categories }) => {
     ) {
       newErrors.limitAmount = "Số tiền phải là số dương";
     }
+    if (!formData.period) {
+      newErrors.period = "Vui lòng chọn chu kỳ ngân sách";
+    }
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -56,30 +61,26 @@ const BudgetModal = ({ isOpen, onClose, onSave, budget, categories }) => {
       const submissionData = {
         ...formData,
         limitAmount: Number.parseFloat(formData.limitAmount),
-        amount: budget ? budget.amount : 0, // Keep existing amount or start with 0
+        amount: budget ? budget.amount : 0,
       };
 
       onSave(submissionData);
     }
   };
 
-  // If modal is not open, don't render anything
   if (!isOpen) return null;
 
-  // Stop propagation on modal click to prevent closing when clicking inside the modal
   const handleModalClick = (e) => {
     e.stopPropagation();
   };
 
   return (
     <div className="fixed inset-0 z-50 overflow-y-auto flex items-center justify-center">
-      {/* Backdrop - clicking this will close the modal */}
       <div
         className="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity"
         onClick={onClose}
       ></div>
 
-      {/* Modal content */}
       <div
         className="bg-white rounded-lg overflow-hidden shadow-xl transform transition-all max-w-lg w-full mx-4 z-50"
         onClick={handleModalClick}
@@ -100,7 +101,6 @@ const BudgetModal = ({ isOpen, onClose, onSave, budget, categories }) => {
 
           <form onSubmit={handleSubmit}>
             <div className="space-y-4">
-              {/* Category */}
               <div>
                 <label
                   htmlFor="categoryId"
@@ -132,7 +132,6 @@ const BudgetModal = ({ isOpen, onClose, onSave, budget, categories }) => {
                 )}
               </div>
 
-              {/* Budget Limit */}
               <div>
                 <label
                   htmlFor="limitAmount"
@@ -160,6 +159,32 @@ const BudgetModal = ({ isOpen, onClose, onSave, budget, categories }) => {
                   <p className="mt-1 text-sm text-red-600">
                     {errors.limitAmount}
                   </p>
+                )}
+              </div>
+
+              <div>
+                <label
+                  htmlFor="period"
+                  className="block text-sm font-medium text-gray-700 mb-1"
+                >
+                  Chu kỳ ngân sách
+                </label>
+                <select
+                  id="period"
+                  name="period"
+                  value={formData.period}
+                  onChange={handleChange}
+                  className={`block w-full px-3 py-2 border ${
+                    errors.period ? "border-red-300" : "border-gray-300"
+                  } rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm`}
+                >
+                  <option value="monthly">Hàng tháng</option>
+                  <option value="weekly">Hàng tuần</option>
+                  <option value="daily">Hàng ngày</option>
+                  <option value="yearly">Hàng năm</option>
+                </select>
+                {errors.period && (
+                  <p className="mt-1 text-sm text-red-600">{errors.period}</p>
                 )}
               </div>
             </div>

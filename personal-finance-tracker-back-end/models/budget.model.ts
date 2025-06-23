@@ -15,11 +15,22 @@ const budgetSchema = new Schema<IBudget>(
     },
     amount: {
       type: Number,
-      default: 0,
+      required: true,
+      min: 0,
     },
     limitAmount: {
       type: Number,
-      default: 0,
+      required: true,
+      min: 1,
+    },
+    period: {
+      type: String,
+      enum: ["daily", "weekly", "monthly", "yearly"],
+      required: true,
+    },
+    periodStartDate: {
+      type: Date,
+      required: true,
     },
   },
   { timestamps: true }
