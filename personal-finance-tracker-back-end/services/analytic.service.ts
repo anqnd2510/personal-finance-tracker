@@ -1,4 +1,7 @@
-import { IOverviewData } from "../interfaces/analytic.interface";
+import {
+  IOverviewData,
+  ICategoryAnalysisResult,
+} from "../interfaces/analytic.interface";
 import { AnalyticRepository } from "../repositories/analytic.repository";
 import { Period } from "../constants/period.enum";
 import { Types } from "mongoose";
@@ -59,6 +62,48 @@ export class AnalyticService {
       );
     }
   }
+  /**
+   * Gets an overview of the account's financial data.
+   * @param {Types.ObjectId} accountId - The ID of the account.
+   * @param {Period} period - Period to summarize (week, month, year).
+   * @param {Date} [customDate] - Optional custom date (default is now).
+   * @returns {Promise<ApiResponse>} - ApiResponse with overview data.
+   * @throws {Error} - If an error occurs while retrieving data.
+   */
+  async getCategoryAnalysis(
+    accountId: Types.ObjectId,
+    period: Period,
+    customDate?: Date
+  ): Promise<ApiResponse<ICategoryAnalysisResult[] | null>> {
+    try {
+      const date = customDate || new Date();
+      const { startDate, endDate } = this.getStartAndEndDate(period, date);
+
+      const rawResult = await this.analyticRepo.getMonthlyCategoryAnalysis(
+        accountId,
+        startDate,
+        endDate
+      );
+      const formatted: ICategoryAnalysisResult[] = rawResult.map((item) => ({
+        categoryId: item._id.categoryId.toString(),
+        categoryName: item._id.categoryName,
+        type: item._id.type,
+        totalAmount: item.totalAmount,
+        transactionCount: item.transactionCount,
+      }));
+      return ApiResponse.success(
+        formatted,
+        `Category analysis retrieved for period: ${period}`,
+        HTTP_STATUS.OK
+      );
+    } catch (error) {
+      console.error("Error in getCategoryAnalysisByPeriod:", error);
+      return ApiResponse.error(
+        "Failed to retrieve category analysis",
+        HTTP_STATUS.INTERNAL_SERVER_ERROR
+      );
+    }
+  }
 
   private getStartAndEndDate(
     period: Period,
@@ -69,6 +114,11 @@ export class AnalyticService {
     const day = date.getDate();
 
     switch (period) {
+      case Period.Day: {
+        const startDate = new Date(year, month, day, 0, 0, 0, 0);
+        const endDate = new Date(year, month, day, 23, 59, 59, 999);
+        return { startDate, endDate };
+      }
       case Period.Week: {
         const dayOfWeek = date.getDay(); // 0 (Sun) - 6 (Sat)
         const diffToMonday = (dayOfWeek + 6) % 7;

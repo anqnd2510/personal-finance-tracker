@@ -51,31 +51,39 @@ export class AnalyticRepository {
       date: { $gte: startDate, $lte: endDate },
     });
   }
-
-  async getTotalExpensesByCategory(
+  async getMonthlyCategoryAnalysis(
     accountId: Types.ObjectId,
-    categoryId: Types.ObjectId
-  ): Promise<number> {
-    const now = new Date();
-    const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
-    const endOfMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0);
-    const result = await Transaction.aggregate([
+    start: Date,
+    end: Date
+  ) {
+    return Transaction.aggregate([
       {
         $match: {
           accountId,
-          categoryId,
-          type: "expense",
-          date: { $gte: startOfMonth, $lte: endOfMonth },
+          date: { $gte: start, $lte: end },
         },
       },
       {
-        $group: {
-          _id: null,
-          total: { $sum: "$amount" },
+        $lookup: {
+          from: "categories",
+          localField: "categoryId",
+          foreignField: "_id",
+          as: "category",
         },
       },
+      { $unwind: "$category" },
+      {
+        $group: {
+          _id: {
+            categoryId: "$categoryId",
+            categoryName: "$category.name",
+            type: "$type",
+          },
+          totalAmount: { $sum: "$amount" },
+          transactionCount: { $sum: 1 },
+        },
+      },
+      { $sort: { totalAmount: -1 } },
     ]);
-
-    return result[0]?.total || 0;
   }
 }

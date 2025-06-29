@@ -4,3 +4,11 @@ export interface IOverviewData {
   transactionCount: number;
   savingPercentage: number;
 }
+
+export interface ICategoryAnalysisResult {
+  categoryId: string;
+  categoryName: string;
+  type: "income" | "expense";
+  totalAmount: number;
+  transactionCount: number;
+}
