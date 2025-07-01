@@ -51,14 +51,10 @@ JWT_SECRET=your_jwt_secret
 OPENAI_API_KEY=your_openai_key
 Start the backend server:
 
-bash
-Copy
 Edit
 npm run dev
+---
 🌐 Frontend Setup
-bash
-Copy
-Edit
 cd ../frontend
 npm install
 npm run dev
@@ -67,11 +63,10 @@ The app will run at:
 Frontend: http://localhost:5173
 
 Backend: http://localhost:5000
-
+---
 📁 Folder Structure
 Backend
 bash
-Copy
 Edit
 /backend
 ├── controllers/         # Route handlers
@@ -85,7 +80,6 @@ Edit
 └── server.ts            # Server entry point
 Frontend
 bash
-Copy
 Edit
 /frontend
 ├── components/          # Reusable UI components
@@ -140,7 +134,7 @@ Each user has a role (e.g., user, admin)
 Middleware restricts access to protected routes
 
 Easily extendable for permission-based controls
-
+---
 🛡️ Role-Based Access Control (RBAC)
 The backend includes a simple but extensible RBAC system:
 
@@ -149,7 +143,7 @@ Users are assigned roles (default: user)
 Role-based middleware protects sensitive endpoints
 
 Can be extended to support granular permissions (e.g. create_budget, edit_transaction, etc.)
-
+---
 📌 Future Improvements
 🔄 Google OAuth login
 
