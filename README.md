@@ -8,13 +8,13 @@ A modern, full-stack personal finance management application that helps users tr
 
 ## 🌟 Features
 
-- 🔐 **Authentication & RBAC** – Secure login via JWT with basic role-based access control
-- 📂 **Category Management** – Custom spending categories like Food, Travel, Entertainment, etc.
-- 💵 **Transactions** – Log income & expenses with filtering by time and category
-- 🎯 **Budget Management** – Set monthly budgets per category and receive real-time warnings
-- 📊 **Analytics Dashboard** – View charts and summaries for each month and category
-- 🤖 **AI Assistant** – Analyze your spending behavior and receive suggestions powered by GPT
-- 🌓 **Dark Mode & Responsive UI** – Mobile-first, clean, and modern interface
+- 🔐 **Authentication & RBAC** – Secure login via JWT with basic role-based access control  
+- 📂 **Category Management** – Custom spending categories like Food, Travel, Entertainment, etc.  
+- 💵 **Transactions** – Log income & expenses with filtering by time and category  
+- 🎯 **Budget Management** – Set monthly budgets per category and receive real-time warnings  
+- 📊 **Analytics Dashboard** – View charts and summaries for each month and category  
+- 🤖 **AI Assistant** – Analyze your spending behavior and receive suggestions powered by GPT  
+- 🌓 **Dark Mode & Responsive UI** – Mobile-first, clean, and modern interface  
 
 ---
 
@@ -40,22 +40,40 @@ A modern, full-stack personal finance management application that helps users tr
 git clone https://github.com/your-username/personal-finance-tracker.git
 cd personal-finance-tracker/backend
 npm install
-#### Create a .env file in the /backend folder:
+Create a .env file in /backend:
+
+ini
+Copy
+Edit
 PORT=5000
 MONGODB_URI=mongodb://localhost:27017/finance-db
 JWT_SECRET=your_jwt_secret
 OPENAI_API_KEY=your_openai_key
-#### Start the backend development server:
-npm run dev
+Start the backend server:
 
-### 🌐 Frontend Setup
+bash
+Copy
+Edit
+npm run dev
+🌐 Frontend Setup
+bash
+Copy
+Edit
 cd ../frontend
 npm install
-#### Start the frontend:
 npm run dev
-### 📁 Folder Structure:
-#### Backend (/backend)
-##### /backend
+The app will run at:
+
+Frontend: http://localhost:5173
+
+Backend: http://localhost:5000
+
+📁 Folder Structure
+Backend
+bash
+Copy
+Edit
+/backend
 ├── controllers/         # Route handlers
 ├── services/            # Business logic
 ├── models/              # Mongoose schemas
@@ -65,52 +83,85 @@ npm run dev
 ├── utils/               # Helpers and constants
 ├── app.ts               # Express app configuration
 └── server.ts            # Server entry point
-##### /frontend
+Frontend
+bash
+Copy
+Edit
+/frontend
 ├── components/          # Reusable UI components
 ├── pages/               # Page-level views
 ├── hooks/               # Custom React hooks
 ├── contexts/            # Global app state
 ├── assets/              # Icons, images, etc.
 └── main.tsx             # React app entry point
-### 📊 API Highlights
+📊 API Highlights
 🔁 Transactions
-GET /api/transactions: Get all transactions (filterable)
-POST /api/transactions: Create a new transaction
-GET /api/transactions/:id: View a transaction by ID
-PUT /api/transactions/:id: Update a transaction
+Method	Endpoint	Description
+GET	/api/transactions	Get all transactions (filterable)
+POST	/api/transactions	Create a new transaction
+GET	/api/transactions/:id	View a transaction by ID
+PUT	/api/transactions/:id	Update a transaction
+
 📂 Categories
-GET /api/categories: Get all categories (default + user-defined)
-POST /api/categories: Create a custom category
-PUT /api/categories/:id: Update category details
-DELETE /api/categories/:id: Delete a category
+Method	Endpoint	Description
+GET	/api/categories	Get all categories
+POST	/api/categories	Create a custom category
+PUT	/api/categories/:id	Update category details
+DELETE	/api/categories/:id	Delete a category
+
 🎯 Budgets
-POST /api/budgets: Set a monthly budget for a category
-GET /api/budgets: View all budgets by month
-PUT /api/budgets/:id: Update budget amount
-GET /api/budgets/warnings: Get list of near-limit warnings
+Method	Endpoint	Description
+POST	/api/budgets	Set a monthly budget for a category
+GET	/api/budgets	View all budgets by month
+PUT	/api/budgets/:id	Update a budget
+GET	/api/budgets/warnings	List categories nearing/exceeding limit
+
 📈 Analytics
-GET /api/analytics/overview: Monthly overview (total income, expenses, savings)
-GET /api/analytics/monthly?month=YYYY-MM: Category-wise spending chart
-GET /api/analytics/compare?month=YYYY-MM: Compare current and previous month
+Method	Endpoint	Description
+GET	/api/analytics/overview	Monthly income, expenses, savings
+GET	/api/analytics/monthly?month=YYYY-MM	Spending chart by category
+GET	/api/analytics/compare?month=YYYY-MM	Compare spending vs previous month
+
 🤖 AI Assistant
-POST /api/ai/analyze: Analyze spending behavior (OpenAI integration)
-POST /api/ai/chat: Ask questions like "Where did I overspend?"
+Method	Endpoint	Description
+POST	/api/ai/analyze	Analyze spending behavior with GPT
+POST	/api/ai/chat	Ask financial questions ("Where did I overspend?")
+
 🔐 Auth & RBAC
-POST /api/auth/register: Register a new account
-POST /api/auth/login: Login with email/password
-GET /api/auth/profile: Get current user profile
-RBAC: Basic role system (user, admin) with route protection middleware
+Method	Endpoint	Description
+POST	/api/auth/register	Register a new account
+POST	/api/auth/login	Login with email/password
+GET	/api/auth/profile	Get current user profile
+
+RBAC:
+
+Each user has a role (e.g., user, admin)
+
+Middleware restricts access to protected routes
+
+Easily extendable for permission-based controls
+
 🛡️ Role-Based Access Control (RBAC)
 The backend includes a simple but extensible RBAC system:
-Users are assigned roles (e.g., user, admin)
-Protected routes use middleware to restrict access
-Designed for future extension with custom roles/permissions
 
-### 📌 Future Improvements
+Users are assigned roles (default: user)
+
+Role-based middleware protects sensitive endpoints
+
+Can be extended to support granular permissions (e.g. create_budget, edit_transaction, etc.)
+
+📌 Future Improvements
 🔄 Google OAuth login
+
 🔔 Email alerts via scheduled cron jobs
+
 📤 Export data to CSV/Excel
+
 🛡️ Two-Factor Authentication (2FA)
+
 📊 Quarterly/Yearly analytics
-👨‍👩‍👧 Shared family budgeting
+
+👪 Shared family budgeting
+
 🧑‍💼 Admin dashboard for role management
+
