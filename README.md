@@ -40,8 +40,4 @@ A modern, full-stack personal finance management application that helps users tr
 git clone https://github.com/your-username/personal-finance-tracker.git
 cd personal-finance-tracker/backend
 npm install
-Create a .env file in the /backend folder:
-PORT=5000
-MONGODB_URI=mongodb://localhost:27017/finance-db
-JWT_SECRET=your_jwt_secret
-OPENAI_API_KEY=your_openai_key
+
