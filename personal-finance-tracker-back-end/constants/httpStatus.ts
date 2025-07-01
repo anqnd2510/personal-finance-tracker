@@ -17,7 +17,7 @@ export const HTTP_STATUS = {
   GONE: 410, // Resource no longer available
   UNPROCESSABLE_ENTITY: 422, // Semantic errors in request
   TOO_MANY_REQUESTS: 429, // Rate limit exceeded
-
+  REQUEST_TIMEOUT: 408, // Request timed out
   // Server error responses
   INTERNAL_SERVER_ERROR: 500, // Generic server error
   NOT_IMPLEMENTED: 501, // Server doesn't support functionality
