@@ -5,6 +5,7 @@ import Dashboard from "./pages/Dashboard";
 import Profile from "./pages/Profile";
 import Transactions from "./pages/Transactions";
 import Budgets from "./pages/Budgets";
+import Analytics from "./pages/Analytics";
 import AdminAccounts from "./pages/AdminAccounts";
 import { PrivateRoute } from "./routes/PrivateRoute";
 import { AdminRoute } from "./routes/AdminRoute";
@@ -59,7 +60,7 @@ const App = () => {
             path="/analytics"
             element={
               <PrivateRoute>
-                <div>Analytics Page - Coming Soon</div>
+                <Analytics />
               </PrivateRoute>
             }
           />
