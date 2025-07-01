@@ -16,26 +16,17 @@ export const AuthProvider = ({ children }) => {
     const initializeAuth = () => {
       const token = localStorage.getItem("accessToken");
 
-      console.log(
-        "AuthContext - Initializing with token:",
-        token ? "exists" : "none"
-      );
-
       if (token && !isTokenExpired(token)) {
         const userInfo = getUserInfoFromToken(token);
-        console.log("AuthContext - Decoded user info:", userInfo);
 
         if (userInfo) {
           setAccessToken(token);
           setUser(userInfo);
           setAccount(userInfo);
-          console.log("AuthContext - User role set to:", userInfo.role);
         } else {
-          console.log("AuthContext - Invalid token, logging out");
           logout();
         }
       } else {
-        console.log("AuthContext - Token expired or doesn't exist");
         logout();
       }
 
@@ -47,14 +38,8 @@ export const AuthProvider = ({ children }) => {
 
   const login = (newToken, accountData = null) => {
     try {
-      console.log(
-        "AuthContext - Login attempt with token:",
-        newToken ? "exists" : "none"
-      );
-
       // Decode token to get user info
       const userInfo = getUserInfoFromToken(newToken);
-      console.log("AuthContext - Login decoded user info:", userInfo);
 
       if (userInfo && !isTokenExpired(newToken)) {
         setAccessToken(newToken);
@@ -62,10 +47,6 @@ export const AuthProvider = ({ children }) => {
         setAccount(accountData || userInfo);
         localStorage.setItem("accessToken", newToken);
 
-        console.log(
-          "AuthContext - Login successful, user role:",
-          userInfo.role
-        );
         return userInfo;
       } else {
         console.error("AuthContext - Invalid or expired token");
@@ -80,7 +61,6 @@ export const AuthProvider = ({ children }) => {
   };
 
   const logout = () => {
-    console.log("AuthContext - Logging out");
     setAccessToken(null);
     setAccount(null);
     setUser(null);
@@ -90,12 +70,6 @@ export const AuthProvider = ({ children }) => {
   // Check if user is admin
   const isAdmin = () => {
     const adminStatus = user?.role === "admin" || user?.role === "ADMIN";
-    console.log(
-      "AuthContext - isAdmin check:",
-      adminStatus,
-      "for role:",
-      user?.role
-    );
     return adminStatus;
   };
 
@@ -103,12 +77,6 @@ export const AuthProvider = ({ children }) => {
   const getDefaultRedirectPath = () => {
     const isAdminUser = isAdmin();
     const path = isAdminUser ? "/admin/accounts" : "/dashboard";
-    console.log(
-      "AuthContext - Default redirect path:",
-      path,
-      "for admin status:",
-      isAdminUser
-    );
     return path;
   };
 

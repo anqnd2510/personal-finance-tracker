@@ -12,7 +12,6 @@ const apiClient = axios.create({
     "Content-Type": "application/json",
     Accept: "application/json",
   },
-  timeout: 10000, // Timeout 10 giây
   withCredentials: false, // Không gửi cookie
 });
 

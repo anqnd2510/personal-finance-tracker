@@ -6,23 +6,18 @@
 export const decodeJWT = (token) => {
   try {
     if (!token) {
-      console.log("jwtUtils - No token provided");
       return null;
     }
 
     const parts = token.split(".");
     if (parts.length !== 3) {
-      console.log("jwtUtils - Invalid token format");
       return null;
     }
 
     const payload = parts[1];
     const decoded = JSON.parse(atob(payload));
-
-    console.log("jwtUtils - Decoded JWT payload:", decoded);
     return decoded;
   } catch (error) {
-    console.error("jwtUtils - Error decoding JWT:", error);
     return null;
   }
 };
@@ -36,23 +31,13 @@ export const isTokenExpired = (token) => {
   try {
     const decoded = decodeJWT(token);
     if (!decoded || !decoded.exp) {
-      console.log("jwtUtils - No expiration in token");
       return true;
     }
 
     const currentTime = Date.now() / 1000;
     const isExpired = decoded.exp < currentTime;
-    console.log(
-      "jwtUtils - Token expired:",
-      isExpired,
-      "exp:",
-      decoded.exp,
-      "current:",
-      currentTime
-    );
     return isExpired;
   } catch (error) {
-    console.log("jwtUtils - Error checking expiration:", error);
     return true;
   }
 };
@@ -65,7 +50,6 @@ export const isTokenExpired = (token) => {
 export const getUserRoleFromToken = (token) => {
   const decoded = decodeJWT(token);
   const role = decoded?.role || null;
-  console.log("jwtUtils - Extracted role:", role);
   return role;
 };
 
@@ -77,7 +61,6 @@ export const getUserRoleFromToken = (token) => {
 export const getUserInfoFromToken = (token) => {
   const decoded = decodeJWT(token);
   if (!decoded) {
-    console.log("jwtUtils - No decoded data");
     return null;
   }
 
@@ -91,6 +74,5 @@ export const getUserInfoFromToken = (token) => {
     iat: decoded.iat,
   };
 
-  console.log("jwtUtils - Extracted user info:", userInfo);
   return userInfo;
 };
