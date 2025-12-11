@@ -1,20 +1,17 @@
-import { Document } from "mongoose";
-export interface ICategory extends Document {
-  name: string;
-  description?: string;
-  status?: string;
-  createdAt?: Date;
-  updatedAt?: Date;
-}
+import { Category } from "@prisma/client";
+
+// Use Prisma's generated Category type
+export type ICategory = Category;
+
 export interface ICategoryRequest {
   name: string;
   description?: string;
-  status?: string;
 }
+
 export interface ICategoryResponse {
+  id?: string;
   name: string;
   description?: string;
-  status?: string;
   createdAt?: Date;
   updatedAt?: Date;
 }

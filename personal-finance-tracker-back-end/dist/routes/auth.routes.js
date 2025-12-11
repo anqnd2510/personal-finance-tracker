@@ -1,0 +1,22 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const express_1 = require("express");
+const account_controller_1 = require("../controllers/account.controller");
+const authenticate_1 = require("../middlewares/authenticate");
+const authorizeRole_1 = require("../middlewares/authorizeRole");
+const account_interface_1 = require("../interfaces/account.interface");
+const router = (0, express_1.Router)();
+const controller = new account_controller_1.AccountController();
+router.post("/register", controller.register);
+router.post("/login", controller.login);
+router.post("/logout", controller.logout);
+router.get("/profile", authenticate_1.authenticate, controller.getProfile);
+router.get("/verify", authenticate_1.authenticate, controller.verifyToken);
+router.get("/accounts", authenticate_1.authenticate, (0, authorizeRole_1.authorizeRole)([account_interface_1.Role.ADMIN]), controller.getAllAccounts);
+router.get("/accounts/:id", authenticate_1.authenticate, (0, authorizeRole_1.authorizeRoleHierarchy)(account_interface_1.Role.MANAGER), controller.getAccountById);
+router.put("/accounts/:id", authenticate_1.authenticate, (0, authorizeRole_1.authorizeRole)([account_interface_1.Role.ADMIN]), controller.updateAccount);
+router.patch("/accounts/:id/deactivate", authenticate_1.authenticate, (0, authorizeRole_1.authorizeRole)([account_interface_1.Role.ADMIN]), controller.deactivateAccount);
+router.patch("/accounts/:id/activate", authenticate_1.authenticate, (0, authorizeRole_1.authorizeRole)([account_interface_1.Role.ADMIN]), controller.activateAccount);
+router.delete("/accounts/:id", authenticate_1.authenticate, (0, authorizeRole_1.authorizeRole)([account_interface_1.Role.ADMIN]), controller.deleteAccount);
+exports.default = router;
+//# sourceMappingURL=auth.routes.js.map

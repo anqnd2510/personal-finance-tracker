@@ -1,8 +1,6 @@
-export enum Role {
-  ADMIN = "ADMIN",
-  USER = "USER",
-  MANAGER = "MANAGER",
-}
+// Re-export Role from Prisma for backward compatibility
+import { Role } from "@prisma/client";
+export { Role };
 
 export const RoleHierarchy = {
   [Role.USER]: 1,

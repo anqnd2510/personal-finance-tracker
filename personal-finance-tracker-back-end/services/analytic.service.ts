@@ -4,7 +4,6 @@ import {
 } from "../interfaces/analytic.interface";
 import { AnalyticRepository } from "../repositories/analytic.repository";
 import { Period } from "../constants/period.enum";
-import { Types } from "mongoose";
 import { ApiResponse } from "../utils/apiResponse";
 import { HTTP_STATUS } from "../constants/httpStatus";
 
@@ -13,14 +12,14 @@ export class AnalyticService {
 
   /**
    * Gets an overview of the account's financial data.
-   * @param {Types.ObjectId} accountId - The ID of the account.
+   * @param {string} accountId - The ID of the account.
    * @param {Period} period - Period to summarize (week, month, year).
    * @param {Date} [customDate] - Optional custom date (default is now).
    * @returns {Promise<ApiResponse>} - ApiResponse with overview data.
    *  @throws {Error} - If an error occurs while retrieving data.
    */
   async getOverviewData(
-    accountId: Types.ObjectId,
+    accountId: string,
     period: Period,
     customDate?: Date
   ): Promise<ApiResponse<IOverviewData | null>> {
@@ -64,14 +63,14 @@ export class AnalyticService {
   }
   /**
    * Gets an overview of the account's financial data.
-   * @param {Types.ObjectId} accountId - The ID of the account.
+   * @param {string} accountId - The ID of the account.
    * @param {Period} period - Period to summarize (week, month, year).
    * @param {Date} [customDate] - Optional custom date (default is now).
    * @returns {Promise<ApiResponse>} - ApiResponse with overview data.
    * @throws {Error} - If an error occurs while retrieving data.
    */
   async getCategoryAnalysis(
-    accountId: Types.ObjectId,
+    accountId: string,
     period: Period,
     customDate?: Date
   ): Promise<ApiResponse<ICategoryAnalysisResult[] | null>> {
@@ -84,7 +83,7 @@ export class AnalyticService {
         startDate,
         endDate
       );
-      const formatted: ICategoryAnalysisResult[] = rawResult.map((item) => ({
+      const formatted: ICategoryAnalysisResult[] = rawResult.map((item: any) => ({
         categoryId: item._id.categoryId.toString(),
         categoryName: item._id.categoryName,
         type: item._id.type,

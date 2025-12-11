@@ -13,8 +13,14 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-app.use("/api", mainRouter);
-
+// Setup Swagger before routes
 setupSwagger(app);
+
+// Health check route
+app.get("/", (req, res) => {
+  res.json({ message: "Personal Finance Tracker API", status: "running" });
+});
+
+app.use("/api", mainRouter);
 
 export default app;

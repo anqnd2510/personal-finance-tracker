@@ -1,33 +1,28 @@
-import { Document, Types } from "mongoose";
-export interface ITransaction extends Document {
-  accountId: Types.ObjectId;
-  amount: number;
-  type: "income" | "expense";
-  categoryId: Types.ObjectId;
-  status: string; // e.g., "pending", "completed", "failed"
-  date: Date;
-  description?: string;
-  createdAt?: Date;
-  updatedAt?: Date;
-}
+import { Transaction, TransactionType } from "@prisma/client";
+
+// Use Prisma's generated Transaction type
+export type ITransaction = Transaction;
+
+// Re-export TransactionType for backward compatibility
+export { TransactionType };
+
 export interface ITransactionRequest {
-  accountId: Types.ObjectId;
+  accountId: string;
   amount: number;
-  type: "income" | "expense";
-  categoryId: Types.ObjectId;
+  type: TransactionType;
+  categoryId: string;
   date: Date;
-  status: string; // e.g., "pending", "completed", "failed"
   description?: string;
 }
 
 export interface ITransactionResponse {
-  accountId: Types.ObjectId;
+  id?: string;
+  accountId: string;
   amount: number;
   type: "income" | "expense";
-  categoryId: Types.ObjectId;
+  categoryId: string;
   date: Date;
   description?: string;
-  status: string; // e.g., "pending", "completed", "failed"
   createdAt?: Date;
   updatedAt?: Date;
 }

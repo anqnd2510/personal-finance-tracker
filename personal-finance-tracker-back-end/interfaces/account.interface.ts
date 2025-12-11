@@ -1,32 +1,24 @@
-import { Document } from "mongoose";
-import { Role } from "../constants/role";
+import { Account, Role } from "@prisma/client";
 
-export interface IAccount extends Document {
-  email: string;
-  password: string;
-  firstName: string;
-  lastName: string;
-  dob: Date;
-  phoneNumber: number;
-  isActive?: boolean;
-  role?: Role;
-  createdAt?: Date;
-  updatedAt?: Date;
-}
+// Use Prisma's generated Account type as the base
+export type IAccount = Account;
+
 export interface ICreateAccountRequest {
   email: string;
   password: string;
   firstName: string;
   lastName: string;
   dob: Date;
-  phoneNumber: number;
+  phoneNumber: string;
   role?: Role;
 }
 
+// Re-export Role for backward compatibility
+export { Role };
+
 export interface IUpdateAccountRequest {
-  firstName: string;
-  lastName: string;
-  dob: Date;
-  phoneNumber: number;
-  updatedAt?: Date;
+  firstName?: string;
+  lastName?: string;
+  dob?: Date;
+  phoneNumber?: string;
 }

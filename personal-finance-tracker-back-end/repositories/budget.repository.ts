@@ -1,50 +1,65 @@
-import Budget from "../models/budget.model";
+import { prisma } from "../config/database";
 import {
   IBudget,
   IBudgetRequest,
   IAdjustBudgetAmount,
 } from "../interfaces/budget.interface";
-import { Types } from "mongoose";
 
 export class BudgetRepository {
   async createBudget(budgetData: IBudgetRequest): Promise<IBudget> {
-    const budget = new Budget({
-      ...budgetData,
-      amount: 0,
-      periodStartDate: this.getNewPeriodStartDate(
-        budgetData.period,
-        new Date()
-      ),
+    return await prisma.budget.create({
+      data: {
+        accountId: budgetData.accountId,
+        categoryId: budgetData.categoryId,
+        limitAmount: budgetData.limitAmount,
+        period: budgetData.period,
+        amount: 0,
+        periodStartDate: this.getNewPeriodStartDate(
+          budgetData.period,
+          new Date()
+        ),
+      },
     });
-    return await budget.save();
   }
 
   async findBudgetById(id: string): Promise<IBudget | null> {
-    return await Budget.findById(id);
+    return await prisma.budget.findUnique({
+      where: { id },
+    });
   }
 
-  async findBudgetsByAccountId(
-    accountId: string | Types.ObjectId
-  ): Promise<IBudget[]> {
-    return await Budget.find({ accountId });
+  async findBudgetsByAccountId(accountId: string): Promise<IBudget[]> {
+    return await prisma.budget.findMany({
+      where: { accountId },
+    });
   }
 
   async findByAccountAndCategory(
-    accountId: Types.ObjectId,
-    categoryId: Types.ObjectId
+    accountId: string,
+    categoryId: string
   ): Promise<IBudget | null> {
-    return await Budget.findOne({ accountId, categoryId });
+    return await prisma.budget.findFirst({
+      where: {
+        accountId,
+        categoryId,
+      },
+    });
   }
 
   async updateBudget(
     id: string,
     updateData: Partial<IBudget>
   ): Promise<IBudget | null> {
-    return await Budget.findByIdAndUpdate(id, updateData, { new: true });
+    return await prisma.budget.update({
+      where: { id },
+      data: updateData,
+    });
   }
 
   async deleteBudget(id: string): Promise<IBudget | null> {
-    return await Budget.findByIdAndDelete(id);
+    return await prisma.budget.delete({
+      where: { id },
+    });
   }
 
   async adjustBudgetAmount({
@@ -53,16 +68,19 @@ export class BudgetRepository {
     amount,
     type,
   }: IAdjustBudgetAmount): Promise<void> {
-    const budget = await Budget.findOne({ accountId, categoryId });
+    const budget = await prisma.budget.findFirst({
+      where: { accountId, categoryId },
+    });
     if (!budget) return;
 
     const updatedBudget = await this.resetBudgetIfNeeded(budget);
 
     if (type === "expense") {
-      updatedBudget.amount += amount;
+      await prisma.budget.update({
+        where: { id: updatedBudget.id },
+        data: { amount: updatedBudget.amount + amount },
+      });
     }
-
-    await updatedBudget.save();
   }
 
   async resetBudgetIfNeeded(budget: IBudget): Promise<IBudget> {
@@ -74,9 +92,13 @@ export class BudgetRepository {
     );
 
     if (shouldReset) {
-      budget.amount = 0;
-      budget.periodStartDate = this.getNewPeriodStartDate(budget.period, now);
-      await budget.save();
+      return await prisma.budget.update({
+        where: { id: budget.id },
+        data: {
+          amount: 0,
+          periodStartDate: this.getNewPeriodStartDate(budget.period, now),
+        },
+      });
     }
 
     return budget;

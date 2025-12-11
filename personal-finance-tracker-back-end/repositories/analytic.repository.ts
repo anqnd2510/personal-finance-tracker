@@ -1,89 +1,88 @@
-import Transaction from "../models/transaction.model";
-import { Types } from "mongoose";
+import { prisma } from "../config/database";
+
 export class AnalyticRepository {
-  async getTotalExpenses(accountId: Types.ObjectId, start: Date, end: Date) {
-    const result = await Transaction.aggregate([
-      {
-        $match: {
-          accountId,
-          type: "expense",
-          date: { $gte: start, $lte: end },
+  async getTotalExpenses(accountId: string, start: Date, end: Date) {
+    const result = await prisma.transaction.aggregate({
+      where: {
+        accountId,
+        type: "expense",
+        date: {
+          gte: start,
+          lte: end,
         },
       },
-      {
-        $group: {
-          _id: null,
-          total: { $sum: "$amount" },
-        },
+      _sum: {
+        amount: true,
       },
-    ]);
-    return result[0]?.total || 0;
+    });
+    return result._sum.amount || 0;
   }
-  async getTotalIncome(
-    accountId: Types.ObjectId,
-    startDate: Date,
-    endDate: Date
-  ) {
-    const result = await Transaction.aggregate([
-      {
-        $match: {
-          accountId,
-          type: "income",
-          date: { $gte: startDate, $lte: endDate },
+
+  async getTotalIncome(accountId: string, startDate: Date, endDate: Date) {
+    const result = await prisma.transaction.aggregate({
+      where: {
+        accountId,
+        type: "income",
+        date: {
+          gte: startDate,
+          lte: endDate,
         },
       },
-      {
-        $group: {
-          _id: null,
-          total: { $sum: "$amount" },
-        },
+      _sum: {
+        amount: true,
       },
-    ]);
-    return result[0]?.total || 0;
+    });
+    return result._sum.amount || 0;
   }
-  async getTransactionCount(
-    accountId: Types.ObjectId,
-    startDate: Date,
-    endDate: Date
-  ) {
-    return await Transaction.countDocuments({
-      accountId,
-      date: { $gte: startDate, $lte: endDate },
+
+  async getTransactionCount(accountId: string, startDate: Date, endDate: Date) {
+    return await prisma.transaction.count({
+      where: {
+        accountId,
+        date: {
+          gte: startDate,
+          lte: endDate,
+        },
+      },
     });
   }
-  async getMonthlyCategoryAnalysis(
-    accountId: Types.ObjectId,
-    start: Date,
-    end: Date
-  ) {
-    return Transaction.aggregate([
-      {
-        $match: {
-          accountId,
-          date: { $gte: start, $lte: end },
+
+  async getMonthlyCategoryAnalysis(accountId: string, start: Date, end: Date) {
+    const transactions = await prisma.transaction.findMany({
+      where: {
+        accountId,
+        date: {
+          gte: start,
+          lte: end,
         },
       },
-      {
-        $lookup: {
-          from: "categories",
-          localField: "categoryId",
-          foreignField: "_id",
-          as: "category",
-        },
+      include: {
+        category: true,
       },
-      { $unwind: "$category" },
-      {
-        $group: {
+    });
+
+    // Group by category and type
+    const grouped = transactions.reduce((acc: any, transaction) => {
+      const key = `${transaction.categoryId}-${transaction.type}`;
+      if (!acc[key]) {
+        acc[key] = {
           _id: {
-            categoryId: "$categoryId",
-            categoryName: "$category.name",
-            type: "$type",
+            categoryId: transaction.categoryId,
+            categoryName: transaction.category.name,
+            type: transaction.type,
           },
-          totalAmount: { $sum: "$amount" },
-          transactionCount: { $sum: 1 },
-        },
-      },
-      { $sort: { totalAmount: -1 } },
-    ]);
+          totalAmount: 0,
+          transactionCount: 0,
+        };
+      }
+      acc[key].totalAmount += transaction.amount;
+      acc[key].transactionCount += 1;
+      return acc;
+    }, {});
+
+    // Convert to array and sort by totalAmount descending
+    return Object.values(grouped).sort(
+      (a: any, b: any) => b.totalAmount - a.totalAmount
+    );
   }
 }

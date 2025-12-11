@@ -4,8 +4,7 @@ import {
   IAuthResponse,
   ITokenPayload,
 } from "../interfaces/auth.interface";
-import { ICreateAccountRequest } from "../interfaces/account.interface";
-import { Role } from "../constants/role";
+import { ICreateAccountRequest, Role } from "../interfaces/account.interface";
 import { AccountRepository } from "../repositories/account.repository";
 import { JWTService } from "../utils/jwt";
 import { PasswordService } from "../utils/password";
@@ -51,7 +50,7 @@ export class AuthService {
         password: hashedPassword,
         firstName: registerData.firstName.trim(),
         lastName: registerData.lastName.trim(),
-        dob: registerData.dob,
+        dob: new Date(registerData.dob),
         phoneNumber: registerData.phoneNumber,
         role: Role.USER, // Default role for registration
       };
@@ -155,7 +154,7 @@ export class AuthService {
       }
 
       // Remove password from response
-      const { password, ...userProfile } = account.toObject();
+      const { password, ...userProfile } = account;
       return userProfile;
     } catch (error: any) {
       console.error("Get current user service error:", error);

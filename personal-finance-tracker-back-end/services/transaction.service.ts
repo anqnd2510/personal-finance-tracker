@@ -3,7 +3,6 @@ import { ApiResponse } from "../utils/apiResponse";
 import { TransactionRepository } from "../repositories/transaction.repository";
 import { BudgetRepository } from "../repositories/budget.repository";
 import { ITransactionRequest } from "interfaces/transaction.interface";
-import { Types } from "mongoose";
 
 export class TransactionService {
   constructor(
@@ -108,8 +107,8 @@ export class TransactionService {
 
   private async getBudgetStatus(accountId: string, categoryId: string) {
     const budget = await this.budgetRepo.findByAccountAndCategory(
-      new Types.ObjectId(accountId),
-      new Types.ObjectId(categoryId)
+      accountId,
+      categoryId
     );
 
     if (!budget || budget.limitAmount === 0) return null;

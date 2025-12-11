@@ -1,4 +1,4 @@
-import { Role } from "../constants/role";
+import { Role } from "./account.interface";
 
 export interface ITokenPayload {
   accountId: string;
@@ -19,7 +19,7 @@ export interface IRegisterRequest {
   firstName: string;
   lastName: string;
   dob: Date;
-  phoneNumber: number;
+  phoneNumber: string;
 }
 
 export interface IAuthResponse {
@@ -30,7 +30,7 @@ export interface IAuthResponse {
     lastName: string;
     role: Role;
     dob: Date;
-    phoneNumber: number;
+    phoneNumber: string;
     createdAt: Date;
   };
   token: string;

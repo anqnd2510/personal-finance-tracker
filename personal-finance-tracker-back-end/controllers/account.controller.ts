@@ -4,7 +4,6 @@ import { AuthService } from "../services/auth.service";
 import { AccountService } from "../services/account.service";
 import { ILoginRequest, IRegisterRequest } from "../interfaces/auth.interface";
 import { HTTP_STATUS } from "constants/httpStatus";
-import { Role } from "../constants/role";
 
 export class AccountController {
   private authService: AuthService;

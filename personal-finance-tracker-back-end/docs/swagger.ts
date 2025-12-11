@@ -13,7 +13,7 @@ const options: swaggerJsdoc.Options = {
     },
     servers: [
       {
-        url: "http://localhost:3000",
+        url: "http://localhost:4000",
       },
     ],
     components: {
@@ -31,7 +31,10 @@ const options: swaggerJsdoc.Options = {
       },
     ],
   },
-  apis: [path.join(__dirname, "../routes/*.ts")],
+  apis: [
+    path.join(__dirname, "../routes/*.js"),
+    path.join(process.cwd(), "routes/*.ts"), // Read from source TS files for JSDoc comments
+  ],
 };
 
 const swaggerDocs = swaggerJsdoc(options);

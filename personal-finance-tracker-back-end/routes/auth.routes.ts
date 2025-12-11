@@ -5,7 +5,7 @@ import {
   authorizeRole,
   authorizeRoleHierarchy,
 } from "../middlewares/authorizeRole";
-import { Role } from "../constants/role";
+import { Role } from "../interfaces/account.interface";
 
 const router = Router();
 const controller = new AccountController();

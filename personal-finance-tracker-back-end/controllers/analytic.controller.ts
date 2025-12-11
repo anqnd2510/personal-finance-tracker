@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from "express";
 import { AnalyticService } from "../services/analytic.service";
 import { Period } from "../constants/period.enum";
-import mongoose from "mongoose";
+
 const service = new AnalyticService();
 
 export const getAnalyticsOverview = async (
@@ -22,7 +22,7 @@ export const getAnalyticsOverview = async (
       : Period.Month;
     const customDate = dateParam ? new Date(dateParam as string) : undefined;
     const response = await service.getOverviewData(
-      new mongoose.Types.ObjectId(userId),
+      userId,
       period,
       customDate
     );
@@ -50,7 +50,7 @@ export const getCategoryAnalysisByPeriod = async (
       : Period.Month;
     const customDate = dateParam ? new Date(dateParam as string) : undefined;
     const response = await service.getCategoryAnalysis(
-      new mongoose.Types.ObjectId(userId),
+      userId,
       period,
       customDate
     );

@@ -1,23 +1,22 @@
-import { Document, Types } from "mongoose";
-export interface IBudget extends Document {
-  accountId: Types.ObjectId;
-  categoryId: Types.ObjectId;
-  amount: number;
-  limitAmount: number;
-  period: "daily" | "weekly" | "monthly" | "yearly";
-  periodStartDate: Date;
-  createdAt?: Date;
-  updatedAt?: Date;
-}
+import { Budget, Period } from "@prisma/client";
+
+// Use Prisma's generated Budget type
+export type IBudget = Budget;
+
+// Re-export Period for backward compatibility
+export { Period };
+
 export interface IBudgetRequest {
-  accountId: Types.ObjectId;
-  categoryId: Types.ObjectId;
+  accountId: string;
+  categoryId: string;
   limitAmount: number;
-  period: "daily" | "weekly" | "monthly" | "yearly";
+  period: Period;
 }
+
 export interface IBudgetResponse {
-  accountId: Types.ObjectId;
-  categoryId: Types.ObjectId;
+  id?: string;
+  accountId: string;
+  categoryId: string;
   amount: number;
   limitAmount?: number;
   period: string;
@@ -28,14 +27,16 @@ export interface IBudgetResponse {
   createdAt?: Date;
   updatedAt?: Date;
 }
+
 export interface IBudgetStatus {
   status: "safe" | "warning" | "exceeded";
   percentage: number;
   remaining: number;
 }
+
 export interface IAdjustBudgetAmount {
-  accountId: Types.ObjectId;
-  categoryId: Types.ObjectId;
+  accountId: string;
+  categoryId: string;
   amount: number;
   type: "income" | "expense";
 }

@@ -1,0 +1,99 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum Role {
+  USER
+  MANAGER
+  ADMIN
+}
+
+enum Period {
+  daily
+  weekly
+  monthly
+  yearly
+}
+
+enum TransactionType {
+  income
+  expense
+}
+
+model Account {
+  id          String      @id @default(uuid())
+  email       String      @unique
+  password    String
+  firstName   String
+  lastName    String
+  dob         DateTime
+  phoneNumber String
+  isActive    Boolean     @default(true)
+  role        Role        @default(USER)
+
+  budgets       Budget[]
+  transactions  Transaction[]
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@map("Account")
+}
+
+model Category {
+  id          String        @id @default(uuid())
+  name        String        @unique
+  description String        @default("")
+
+  budgets       Budget[]
+  transactions  Transaction[]
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@map("Category")
+}
+
+model Budget {
+  id              String   @id @default(uuid())
+  
+  accountId       String
+  categoryId      String
+
+  amount          Float
+  limitAmount     Float
+  period          Period
+  periodStartDate DateTime
+
+  account   Account  @relation(fields: [accountId], references: [id])
+  category  Category @relation(fields: [categoryId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("Budget")
+}
+
+model Transaction {
+  id          String            @id @default(uuid())
+  
+  accountId   String
+  categoryId  String
+
+  amount      Float
+  type        TransactionType
+  date        DateTime
+  description String        @default("")
+
+  account     Account  @relation(fields: [accountId], references: [id])
+  category    Category @relation(fields: [categoryId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("Transaction")
+}

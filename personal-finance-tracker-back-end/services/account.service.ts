@@ -22,7 +22,7 @@ export class AccountService {
       );
       const totalAccounts = await this.accountRepository.countAccounts();
       const privatedAccounts = accounts.map((account) => {
-        const { password, ...safeAccount } = account.toObject();
+        const { password, ...safeAccount } = account;
         return safeAccount;
       });
       return {
@@ -53,7 +53,7 @@ export class AccountService {
         throw new Error("Account not found");
       }
 
-      const { password, ...safeAccount } = account.toObject();
+      const { password, ...safeAccount } = account;
       return safeAccount;
     } catch (error: any) {
       console.error("Get account by ID service error:", error);
@@ -70,16 +70,13 @@ export class AccountService {
    */
   async updateAccount(id: string, updateData: IUpdateAccountRequest) {
     try {
-      const updatedAccount = await this.accountRepository.updateAccount(id, {
-        ...updateData,
-        updatedAt: new Date(),
-      });
+      const updatedAccount = await this.accountRepository.updateAccount(id, updateData);
 
       if (!updatedAccount) {
         throw new Error("Account not found");
       }
 
-      const { password, ...safeAccount } = updatedAccount.toObject();
+      const { password, ...safeAccount } = updatedAccount;
       return safeAccount;
     } catch (error: any) {
       console.error("Update account service error:", error);
@@ -101,7 +98,7 @@ export class AccountService {
         throw new Error("Account not found");
       }
 
-      const { password, ...safeAccount } = deactivatedAccount.toObject();
+      const { password, ...safeAccount } = deactivatedAccount;
       return safeAccount;
     } catch (error: any) {
       console.error("Deactivate account service error:", error);
@@ -121,7 +118,7 @@ export class AccountService {
         throw new Error("Account not found");
       }
 
-      const { password, ...safeAccount } = activatedAccount.toObject();
+      const { password, ...safeAccount } = activatedAccount;
       return safeAccount;
     } catch (error: any) {
       console.error("Activate account service error:", error);

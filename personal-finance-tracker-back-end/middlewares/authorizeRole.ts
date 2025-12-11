@@ -1,6 +1,7 @@
 import { Request, Response, NextFunction } from "express";
 import { ApiResponse } from "../utils/apiResponse";
-import { Role, RoleHierarchy } from "../constants/role";
+import { Role } from "@prisma/client";
+import { RoleHierarchy } from "../constants/role";
 
 // Extend Express Request interface
 declare global {

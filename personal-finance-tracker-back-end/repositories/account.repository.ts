@@ -1,4 +1,4 @@
-import Account from "../models/account.model";
+import { prisma } from "../config/database";
 import {
   IAccount,
   ICreateAccountRequest,
@@ -7,62 +7,70 @@ import {
 
 export class AccountRepository {
   async createAccount(accountData: ICreateAccountRequest): Promise<IAccount> {
-    const account = new Account(accountData);
-    return await account.save();
+    return await prisma.account.create({
+      data: accountData,
+    });
   }
 
   async findAccountByEmail(email: string): Promise<IAccount | null> {
-    return await Account.findOne({ email });
+    return await prisma.account.findUnique({
+      where: { email },
+    });
   }
 
   async findAccountById(id: string): Promise<IAccount | null> {
-    return await Account.findById(id);
+    return await prisma.account.findUnique({
+      where: { id },
+    });
   }
 
   async updateAccount(
     id: string,
     updateData: IUpdateAccountRequest
   ): Promise<IAccount | null> {
-    return await Account.findByIdAndUpdate(id, updateData, { new: true });
+    return await prisma.account.update({
+      where: { id },
+      data: updateData,
+    });
   }
 
   async deleteAccount(id: string): Promise<IAccount | null> {
-    return await Account.findByIdAndDelete(id);
+    return await prisma.account.delete({
+      where: { id },
+    });
   }
 
   async findActiveAccountByEmail(email: string): Promise<IAccount | null> {
-    return await Account.findOne({ email, isActive: true });
+    return await prisma.account.findFirst({
+      where: {
+        email,
+        isActive: true,
+      },
+    });
   }
 
   async findAllAccounts(limit?: number, skip?: number): Promise<IAccount[]> {
-    const query = Account.find();
-
-    if (skip) {
-      query.skip(skip);
-    }
-
-    if (limit) {
-      query.limit(limit);
-    }
-
-    return await query.exec();
+    return await prisma.account.findMany({
+      skip,
+      take: limit,
+    });
   }
+
   async countAccounts(): Promise<number> {
-    return await Account.countDocuments();
+    return await prisma.account.count();
   }
+
   async deactivateAccount(id: string): Promise<IAccount | null> {
-    return await Account.findByIdAndUpdate(
-      id,
-      { isActive: false, updatedAt: new Date() },
-      { new: true }
-    );
+    return await prisma.account.update({
+      where: { id },
+      data: { isActive: false },
+    });
   }
 
   async activateAccount(id: string): Promise<IAccount | null> {
-    return await Account.findByIdAndUpdate(
-      id,
-      { isActive: true, updatedAt: new Date() },
-      { new: true }
-    );
+    return await prisma.account.update({
+      where: { id },
+      data: { isActive: true },
+    });
   }
 }
