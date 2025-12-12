@@ -2,7 +2,6 @@ import apiClient from "./apiClient";
 
 const AI_API_URL = "/ai";
 
-// Sửa lại hàm chatWithAi
 export const chatWithAi = async (prompt) => {
   try {
     const accessToken = localStorage.getItem("accessToken");

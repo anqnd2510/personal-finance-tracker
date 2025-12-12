@@ -23,6 +23,7 @@ class BudgetRepository {
     async findBudgetsByAccountId(accountId) {
         return await database_1.prisma.budget.findMany({
             where: { accountId },
+            include: { category: true },
         });
     }
     async findByAccountAndCategory(accountId, categoryId) {

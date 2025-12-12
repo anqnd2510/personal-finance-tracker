@@ -1,8 +1,8 @@
-import { IBudget, IBudgetRequest, IAdjustBudgetAmount } from "../interfaces/budget.interface";
+import { IBudget, IBudgetWithCategory, IBudgetRequest, IAdjustBudgetAmount } from "../interfaces/budget.interface";
 export declare class BudgetRepository {
     createBudget(budgetData: IBudgetRequest): Promise<IBudget>;
     findBudgetById(id: string): Promise<IBudget | null>;
-    findBudgetsByAccountId(accountId: string): Promise<IBudget[]>;
+    findBudgetsByAccountId(accountId: string): Promise<IBudgetWithCategory[]>;
     findByAccountAndCategory(accountId: string, categoryId: string): Promise<IBudget | null>;
     updateBudget(id: string, updateData: Partial<IBudget>): Promise<IBudget | null>;
     deleteBudget(id: string): Promise<IBudget | null>;

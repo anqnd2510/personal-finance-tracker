@@ -1,9 +1,11 @@
-import { Budget, Period } from "@prisma/client";
+import { Budget, Period, Category } from "@prisma/client";
 
-// Use Prisma's generated Budget type
 export type IBudget = Budget;
 
-// Re-export Period for backward compatibility
+export type IBudgetWithCategory = Budget & {
+  category: Category;
+};
+
 export { Period };
 
 export interface IBudgetRequest {

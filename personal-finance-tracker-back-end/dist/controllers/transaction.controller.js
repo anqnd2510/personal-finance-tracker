@@ -13,6 +13,9 @@ const createTransaction = async (req, res, next) => {
         }
         const userId = req.account?.accountId;
         transactionData.accountId = userId;
+        if (transactionData.date && typeof transactionData.date === 'string') {
+            transactionData.date = new Date(transactionData.date);
+        }
         const response = await service.createTransaction(transactionData);
         res.status(response.statusCode).json(response);
     }

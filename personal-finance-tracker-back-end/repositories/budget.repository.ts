@@ -1,6 +1,7 @@
 import { prisma } from "../config/database";
 import {
   IBudget,
+  IBudgetWithCategory,
   IBudgetRequest,
   IAdjustBudgetAmount,
 } from "../interfaces/budget.interface";
@@ -28,9 +29,10 @@ export class BudgetRepository {
     });
   }
 
-  async findBudgetsByAccountId(accountId: string): Promise<IBudget[]> {
+  async findBudgetsByAccountId(accountId: string): Promise<IBudgetWithCategory[]> {
     return await prisma.budget.findMany({
       where: { accountId },
+      include: { category: true },
     });
   }
 

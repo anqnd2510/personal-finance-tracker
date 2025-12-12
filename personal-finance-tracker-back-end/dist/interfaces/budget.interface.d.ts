@@ -1,5 +1,8 @@
-import { Budget, Period } from "@prisma/client";
+import { Budget, Period, Category } from "@prisma/client";
 export type IBudget = Budget;
+export type IBudgetWithCategory = Budget & {
+    category: Category;
+};
 export { Period };
 export interface IBudgetRequest {
     accountId: string;

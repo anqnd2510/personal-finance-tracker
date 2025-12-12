@@ -15,6 +15,12 @@ export const createTransaction = async (
     }
     const userId = req.account?.accountId;
     transactionData.accountId = userId;
+    
+    // Convert date string to Date object if it's a string
+    if (transactionData.date && typeof transactionData.date === 'string') {
+      transactionData.date = new Date(transactionData.date);
+    }
+    
     const response = await service.createTransaction(transactionData);
     res.status(response.statusCode).json(response);
   } catch (err) {

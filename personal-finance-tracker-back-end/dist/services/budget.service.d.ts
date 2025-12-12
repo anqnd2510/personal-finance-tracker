@@ -26,17 +26,7 @@ export declare class BudgetService {
         limitAmount: number;
         periodStartDate: Date;
     }>>;
-    getBudgetsByAccountId(accountId: string): Promise<ApiResponse<null> | ApiResponse<{
-        id: string;
-        createdAt: Date;
-        updatedAt: Date;
-        accountId: string;
-        amount: number;
-        categoryId: string;
-        period: import(".prisma/client").$Enums.Period;
-        limitAmount: number;
-        periodStartDate: Date;
-    }[]>>;
+    getBudgetsByAccountId(accountId: string): Promise<ApiResponse<null> | ApiResponse<import("../interfaces/budget.interface").IBudgetWithCategory[]>>;
     updateBudget(id: string, updateData: Partial<IBudgetRequest>): Promise<ApiResponse<null> | ApiResponse<{
         id: string;
         createdAt: Date;

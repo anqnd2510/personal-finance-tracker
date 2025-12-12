@@ -6,7 +6,7 @@ class AIService {
     async generateResponse(prompt) {
         try {
             const response = await openai_1.openai.chat.completions.create({
-                model: "deepseek/deepseek-r1:free",
+                model: "tngtech/deepseek-r1t2-chimera:free",
                 messages: [{ role: "user", content: prompt }],
             });
             return response.choices[0].message.content;

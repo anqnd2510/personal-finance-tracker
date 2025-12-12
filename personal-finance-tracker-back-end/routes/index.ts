@@ -5,6 +5,7 @@ import categoryRoutes from "./category.route";
 import budgetRoutes from "./budget.route";
 import analyticRoutes from "./analytic.route";
 import aiRoutes from "./ai.route";
+import insightRoutes from "./insight.route";
 const router = Router();
 
 router.use("/auths", accountRoutes);
@@ -18,5 +19,7 @@ router.use("/budgets", budgetRoutes);
 router.use("/analytics", analyticRoutes);
 
 router.use("/ai", aiRoutes);
+
+router.use("/insights", insightRoutes);
 
 export default router;

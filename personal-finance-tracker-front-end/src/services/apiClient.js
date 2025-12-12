@@ -1,21 +1,18 @@
 import axios from "axios";
 
-// Lấy token từ localStorage nếu có
 const getAuthToken = () => {
   return localStorage.getItem("accessToken");
 };
 
-// Tạo instance axios với cấu hình mặc định
 const apiClient = axios.create({
-  baseURL: "http://localhost:3000/api",
+  baseURL: "http://localhost:4000/api",
   headers: {
     "Content-Type": "application/json",
     Accept: "application/json",
   },
-  withCredentials: false, // Không gửi cookie
+  withCredentials: false, 
 });
 
-// Thêm interceptor để xử lý lỗi
 apiClient.interceptors.response.use(
   (response) => response,
   (error) => {
@@ -24,7 +21,6 @@ apiClient.interceptors.response.use(
   }
 );
 
-// Thêm interceptor cho request để thêm token xác thực
 apiClient.interceptors.request.use(
   (config) => {
     const token = getAuthToken();
