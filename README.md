@@ -83,7 +83,49 @@ Set up the database:
 npm run prisma:generate
 
 # Run migrations
-npx prProject Structure
+npx prisma migrate deploy
+
+# Seed categories (optional)
+npx prisma db seed
+```
+
+Build and start the server:
+
+```bash
+npm run build
+npm run start
+```
+
+---
+
+### 🌐 Frontend Setup
+
+```bash
+cd personal-finance-tracker-front-end
+npm install
+```
+
+Create a `.env` file:
+
+```env
+VITE_API_URL=http://localhost:4000/api
+```
+
+Start the development server:
+
+```bash
+npm run dev
+```
+
+The app will now be running at:
+
+- Frontend: http://localhost:5173
+- Backend API: http://localhost:4000
+- Swagger Docs: http://localhost:4000/api-docs
+
+---
+
+## 📁 Project Structure
 
 ### Backend (`personal-finance-tracker-back-end/`)
 
@@ -137,26 +179,11 @@ npx prProject Structure
 │   ├── utils/           # Helper utilities
 │   └── main.jsx         # Application entry point
 └── public/              # Static assets
-
-Start the development server:
-
-```bash
-npm run dev
 ```
-
-The app will now be running at:
-
-- Frontend: http://localhost:5173
-- Backend API: http://localhost:4000
-- Swagger Docs: http://localhost:4000/api-docs
 
 ---
 
-## 📁 Folder Structure
-
-### Backend
-
-```Documentation
+## 📊 API Documentation
 
 ### 🔐 Authentication
 
