@@ -4,6 +4,7 @@ export interface ITokenPayload {
   accountId: string;
   email: string;
   role: Role;
+  sessionId: string;
   iat?: number;
   exp?: number;
 }
@@ -11,6 +12,7 @@ export interface ITokenPayload {
 export interface ILoginRequest {
   email: string;
   password: string;
+  forceLogin?: boolean;
 }
 
 export interface IRegisterRequest {

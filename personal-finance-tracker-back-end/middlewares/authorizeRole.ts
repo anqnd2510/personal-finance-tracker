@@ -11,6 +11,7 @@ declare global {
         accountId: string;
         email: string;
         role: Role;
+        sessionId?: string;
       };
     }
   }

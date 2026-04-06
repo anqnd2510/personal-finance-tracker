@@ -76,15 +76,34 @@ export class AccountController {
       res.json(ApiResponse.success(result, "Login successful"));
     } catch (error: any) {
       console.error("Login controller error:", error);
+      const isSessionConflict =
+        typeof error?.message === "string" &&
+        error.message.includes("already logged in");
+
+      const statusCode = isSessionConflict
+        ? HTTP_STATUS.CONFLICT
+        : HTTP_STATUS.UNAUTHORIZED;
+
       res
-        .status(HTTP_STATUS.UNAUTHORIZED)
-        .json(ApiResponse.error(error.message || "Login failed", 401));
+        .status(statusCode)
+        .json(ApiResponse.error(error.message || "Login failed", statusCode));
     }
   };
 
   logout = async (req: Request, res: Response): Promise<void> => {
     try {
-      // For JWT, logout is handled on client-side by removing token
+      const accountId = req.account?.accountId;
+      const sessionId = req.account?.sessionId;
+
+      if (!accountId) {
+        res
+          .status(HTTP_STATUS.UNAUTHORIZED)
+          .json(ApiResponse.error("User not authenticated", 401));
+        return;
+      }
+
+      await this.authService.logout(accountId, sessionId);
+
       res.json(ApiResponse.success(null, "Logout successful"));
     } catch (error: any) {
       console.error("Logout controller error:", error);

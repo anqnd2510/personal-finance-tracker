@@ -93,7 +93,7 @@ router.post("/login", authRateLimiter, controller.login);
  *             schema:
  *               $ref: '#/components/schemas/ErrorResponse'
  */
-router.post("/logout", controller.logout);
+router.post("/logout", authenticate, controller.logout);
 
 // Protected routes
 /**

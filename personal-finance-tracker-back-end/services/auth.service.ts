@@ -4,15 +4,61 @@ import {
   IAuthResponse,
   ITokenPayload,
 } from "../interfaces/auth.interface";
+import { randomUUID } from "crypto";
 import { ICreateAccountRequest, Role } from "../interfaces/account.interface";
 import { AccountRepository } from "../repositories/account.repository";
 import { JWTService } from "../utils/jwt";
 import { PasswordService } from "../utils/password";
+import { getRedisClient } from "../config/redis";
 export class AuthService {
   private accountRepository: AccountRepository;
+  private static readonly SESSION_KEY_PREFIX = "auth:session:";
 
   constructor() {
     this.accountRepository = new AccountRepository();
+  }
+
+  private getSessionKey(accountId: string): string {
+    return `${AuthService.SESSION_KEY_PREFIX}${accountId}`;
+  }
+
+  private async storeActiveSession(
+    accountId: string,
+    sessionId: string,
+    token: string
+  ): Promise<void> {
+    try {
+      const redis = getRedisClient();
+      const decoded = JWTService.decodeToken(token) as
+        | { exp?: number }
+        | null;
+
+      const ttlSeconds = decoded?.exp
+        ? Math.max(decoded.exp - Math.floor(Date.now() / 1000), 1)
+        : 24 * 60 * 60;
+
+      await redis.set(this.getSessionKey(accountId), sessionId, "EX", ttlSeconds);
+    } catch (error) {
+      console.error("Failed to store active session:", error);
+    }
+  }
+
+  async logout(accountId: string, sessionId?: string): Promise<void> {
+    try {
+      const redis = getRedisClient();
+      const sessionKey = this.getSessionKey(accountId);
+      const activeSessionId = await redis.get(sessionKey);
+
+      if (!activeSessionId) {
+        return;
+      }
+
+      if (!sessionId || activeSessionId === sessionId) {
+        await redis.del(sessionKey);
+      }
+    } catch (error) {
+      console.error("Logout session cleanup failed:", error);
+    }
   }
 
   /**
@@ -65,9 +111,11 @@ export class AuthService {
         accountId: newAccount.id,
         email: newAccount.email,
         role: newAccount.role || Role.USER, // Provide a default role if undefined
+        sessionId: randomUUID(),
       };
 
       const token = JWTService.generateToken(tokenPayload);
+      await this.storeActiveSession(newAccount.id, tokenPayload.sessionId, token);
 
       return {
         account: {
@@ -112,14 +160,24 @@ export class AuthService {
         throw new Error("Invalid email or password");
       }
 
+      const redis = getRedisClient();
+      const existingSessionId = await redis.get(this.getSessionKey(account.id));
+      if (existingSessionId && !loginData.forceLogin) {
+        throw new Error(
+          "Account is already logged in on another device. Logout first or set forceLogin=true"
+        );
+      }
+
       // Generate token
       const tokenPayload: ITokenPayload = {
         accountId: account.id,
         email: account.email,
         role: account.role || Role.USER,
+        sessionId: randomUUID(),
       };
 
       const token = JWTService.generateToken(tokenPayload);
+      await this.storeActiveSession(account.id, tokenPayload.sessionId, token);
 
       return {
         account: {
