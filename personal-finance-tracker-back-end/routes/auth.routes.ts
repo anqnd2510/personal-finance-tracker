@@ -5,6 +5,7 @@ import {
   authorizeRole,
   authorizeRoleHierarchy,
 } from "../middlewares/authorizeRole";
+import { authRateLimiter } from "../middlewares/rateLimiter";
 import { Role } from "../interfaces/account.interface";
 
 const router = Router();
@@ -44,7 +45,7 @@ const controller = new AccountController();
  *             schema:
  *               $ref: '#/components/schemas/ErrorResponse'
  */
-router.post("/register", controller.register);
+router.post("/register", authRateLimiter, controller.register);
 /**
  * @swagger
  * /api/auths/login:
@@ -71,7 +72,7 @@ router.post("/register", controller.register);
  *             schema:
  *               $ref: '#/components/schemas/ErrorResponse'
  */
-router.post("/login", controller.login);
+router.post("/login", authRateLimiter, controller.login);
 /**
  * @swagger
  * /api/auths/logout:

@@ -3,6 +3,7 @@ import cors from "cors";
 import dotenv from "dotenv";
 import { setupSwagger } from "./docs/swagger";
 import mainRouter from "./routes/index";
+import { globalApiLimiter } from "./middlewares/rateLimiter";
 
 // Load environment variables
 dotenv.config();
@@ -21,6 +22,6 @@ app.get("/", (req, res) => {
   res.json({ message: "Personal Finance Tracker API", status: "running" });
 });
 
-app.use("/api", mainRouter);
+app.use("/api", globalApiLimiter, mainRouter);
 
 export default app;

@@ -4,12 +4,14 @@ generator client {
 
 datasource db {
   provider = "postgresql"
+  schemas  = ["finance_app"]
 }
 
 enum Role {
   USER
   MANAGER
   ADMIN
+  @@schema("finance_app")
 }
 
 enum Period {
@@ -17,11 +19,13 @@ enum Period {
   weekly
   monthly
   yearly
+  @@schema("finance_app")
 }
 
 enum TransactionType {
   income
   expense
+  @@schema("finance_app")
 }
 
 model Account {
@@ -42,6 +46,7 @@ model Account {
   updatedAt   DateTime @updatedAt
 
   @@map("Account")
+  @@schema("finance_app")
 }
 
 model Category {
@@ -56,6 +61,7 @@ model Category {
   updatedAt   DateTime @updatedAt
 
   @@map("Category")
+  @@schema("finance_app") 
 }
 
 model Budget {
@@ -76,6 +82,7 @@ model Budget {
   updatedAt DateTime @updatedAt
 
   @@map("Budget")
+  @@schema("finance_app")
 }
 
 model Transaction {
@@ -96,4 +103,5 @@ model Transaction {
   updatedAt DateTime @updatedAt
 
   @@map("Transaction")
+  @@schema("finance_app")
 }

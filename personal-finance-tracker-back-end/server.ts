@@ -3,6 +3,7 @@ import dotenv from "dotenv";
 dotenv.config();
 import app from "./app";
 import { connectDB, disconnectDB } from "./config/database";
+import { disconnectRedis } from "./config/redis";
 
 const PORT = process.env.PORT || 5000;
 
@@ -22,12 +23,14 @@ connectDB()
 // Graceful shutdown
 process.on("SIGINT", async () => {
   console.log("\n🛑 Shutting down gracefully...");
+  await disconnectRedis();
   await disconnectDB();
   process.exit(0);
 });
 
 process.on("SIGTERM", async () => {
   console.log("\n🛑 Shutting down gracefully...");
+  await disconnectRedis();
   await disconnectDB();
   process.exit(0);
 });

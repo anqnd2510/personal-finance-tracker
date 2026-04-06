@@ -1,6 +1,7 @@
 import { Router } from "express";
 import * as aiController from "../controllers/ai.controller";
 import { authenticate } from "../middlewares/authenticate";
+import { aiRateLimiter } from "../middlewares/rateLimiter";
 
 const router = Router();
 
@@ -61,6 +62,6 @@ const router = Router();
  *                   example: "Failed to generate AI response"
  */
 
-router.post("/chat", authenticate, aiController.chatWithAI);
+router.post("/chat", aiRateLimiter, authenticate, aiController.chatWithAI);
 
 export default router;
