@@ -29,7 +29,7 @@ const BudgetCard = ({ budget, categoryName, onEdit, onDelete }) => {
               <PencilIcon className="h-4 w-4" />
             </button>
             <button
-              onClick={() => onDelete(budget._id)}
+              onClick={() => onDelete(budget.id || budget._id)}
               className="text-red-600 hover:text-red-800 p-1 rounded"
               title="Xóa"
             >

@@ -40,6 +40,7 @@ const router = (0, express_1.Router)();
 router.post("/create-transaction", authenticate_1.authenticate, transactionController.createTransaction);
 router.get("/:id", authenticate_1.authenticate, transactionController.getTransactionById);
 router.put("/update-transaction/:id", authenticate_1.authenticate, transactionController.updateTransaction);
+router.delete("/:id", authenticate_1.authenticate, transactionController.deleteTransaction);
 router.get("/", authenticate_1.authenticate, transactionController.getTransactionsByAccountId);
 exports.default = router;
 //# sourceMappingURL=transaction.route.js.map

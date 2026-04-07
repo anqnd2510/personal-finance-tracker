@@ -12,6 +12,7 @@ const analytic_route_1 = __importDefault(require("./analytic.route"));
 const ai_route_1 = __importDefault(require("./ai.route"));
 const insight_route_1 = __importDefault(require("./insight.route"));
 const health_route_1 = __importDefault(require("./health.route"));
+const rule_route_1 = __importDefault(require("./rule.route"));
 const router = (0, express_1.Router)();
 router.use("/auths", auth_routes_1.default);
 router.use("/transactions", transaction_route_1.default);
@@ -21,5 +22,6 @@ router.use("/analytics", analytic_route_1.default);
 router.use("/ai", ai_route_1.default);
 router.use("/insights", insight_route_1.default);
 router.use("/health", health_route_1.default);
+router.use("/rules", rule_route_1.default);
 exports.default = router;
 //# sourceMappingURL=index.js.map

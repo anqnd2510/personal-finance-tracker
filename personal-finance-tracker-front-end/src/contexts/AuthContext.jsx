@@ -1,5 +1,6 @@
 import { createContext, useContext, useState, useEffect } from "react";
 import { isTokenExpired, getUserInfoFromToken } from "../utils/jwtUtils";
+import { logout as logoutService } from "../services/auth.service";
 
 const AuthContext = createContext();
 
@@ -7,9 +8,24 @@ export const AuthProvider = ({ children }) => {
   const [accessToken, setAccessToken] = useState(
     localStorage.getItem("accessToken") || null
   );
-  const [account, setAccount] = useState(null);
+  const [account, setAccount] = useState(() => {
+    try {
+      const storedAccount = localStorage.getItem("account");
+      return storedAccount ? JSON.parse(storedAccount) : null;
+    } catch {
+      return null;
+    }
+  });
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
+
+  const clearLocalAuth = () => {
+    setAccessToken(null);
+    setAccount(null);
+    setUser(null);
+    localStorage.removeItem("accessToken");
+    localStorage.removeItem("account");
+  };
 
   // Initialize user data from token on app start
   useEffect(() => {
@@ -22,12 +38,17 @@ export const AuthProvider = ({ children }) => {
         if (userInfo) {
           setAccessToken(token);
           setUser(userInfo);
-          setAccount(userInfo);
+          try {
+            const storedAccount = localStorage.getItem("account");
+            setAccount(storedAccount ? JSON.parse(storedAccount) : userInfo);
+          } catch {
+            setAccount(userInfo);
+          }
         } else {
-          logout();
+          clearLocalAuth();
         }
       } else {
-        logout();
+        clearLocalAuth();
       }
 
       setLoading(false);
@@ -46,25 +67,31 @@ export const AuthProvider = ({ children }) => {
         setUser(userInfo);
         setAccount(accountData || userInfo);
         localStorage.setItem("accessToken", newToken);
+        localStorage.setItem("account", JSON.stringify(accountData || userInfo));
 
         return userInfo;
       } else {
         console.error("AuthContext - Invalid or expired token");
-        logout();
+        clearLocalAuth();
         return null;
       }
     } catch (error) {
       console.error("AuthContext - Login error:", error);
-      logout();
+      clearLocalAuth();
       return null;
     }
   };
 
-  const logout = () => {
-    setAccessToken(null);
-    setAccount(null);
-    setUser(null);
-    localStorage.removeItem("accessToken");
+  const logout = async () => {
+    try {
+      if (localStorage.getItem("accessToken")) {
+        await logoutService();
+      }
+    } catch (error) {
+      console.error("AuthContext - Logout API error:", error);
+    } finally {
+      clearLocalAuth();
+    }
   };
 
   // Check if user is admin

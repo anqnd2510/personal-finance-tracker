@@ -8,6 +8,8 @@ import { PlusIcon } from "@heroicons/react/24/outline";
 import {
   getTransactions,
   createTransaction,
+  updateTransaction,
+  deleteTransaction,
 } from "../services/transactions.service";
 import { getCategories } from "../services/categories.service";
 
@@ -67,7 +69,7 @@ const Transactions = () => {
           // Create category mapping for quick lookup
           const mapping = {};
           categoriesResponse.data.forEach((category) => {
-            mapping[category._id] = category.name;
+            mapping[category.id || category._id] = category.name;
           });
           setCategoryMap(mapping);
         } else {
@@ -105,18 +107,26 @@ const Transactions = () => {
 
   const handleSaveTransaction = async (transactionData) => {
     try {
-      if (transactionData._id) {
-        // Update existing transaction - just update local state for now
+      const transactionId = transactionData.id || transactionData._id;
+      if (transactionId) {
+        // Update existing transaction using API
+        const response = await updateTransaction(transactionId, transactionData);
+        const updatedTransaction =
+          response?.data?.transaction || response?.data || response;
         setTransactions((prev) =>
           prev.map((t) =>
-            t._id === transactionData._id ? { ...t, ...transactionData } : t
+            (t.id || t._id) === transactionId
+              ? updatedTransaction || { ...t, ...transactionData }
+              : t
           )
         );
       } else {
         // Create new transaction using API
         const response = await createTransaction(transactionData);
 
-        if (response && response.data) {
+        if (response?.data?.transaction) {
+          setTransactions((prev) => [response.data.transaction, ...prev]);
+        } else if (response?.data) {
           setTransactions((prev) => [response.data, ...prev]);
         } else if (response) {
           setTransactions((prev) => [response, ...prev]);
@@ -133,7 +143,8 @@ const Transactions = () => {
   const handleDeleteTransaction = async (id) => {
     if (window.confirm("Bạn có chắc chắn muốn xóa giao dịch này không?")) {
       try {
-        setTransactions((prev) => prev.filter((t) => t._id !== id));
+        await deleteTransaction(id);
+        setTransactions((prev) => prev.filter((t) => (t.id || t._id) !== id));
       } catch (err) {
         console.error("Error deleting transaction:", err);
         setError("Failed to delete transaction");

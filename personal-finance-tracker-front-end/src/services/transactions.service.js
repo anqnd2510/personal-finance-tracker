@@ -93,3 +93,69 @@ export const createTransaction = async (transactionData) => {
     throw error;
   }
 };
+
+/**
+ * Update an existing transaction.
+ * @param {string} transactionId - The ID of the transaction to update
+ * @param {Object} transactionData - The updated data of the transaction
+ * @returns {Promise} - Promise containing the updated transaction
+ */
+export const updateTransaction = async (transactionId, transactionData) => {
+  try {
+    const accessToken = localStorage.getItem("accessToken");
+
+    if (!accessToken) {
+      console.warn("No access token found for updateTransaction");
+      return null;
+    }
+
+    const response = await apiClient.put(
+      `${TRANSACTION_API_URL}/update-transaction/${transactionId}`,
+      transactionData,
+      {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${accessToken}`,
+        },
+      }
+    );
+
+    console.log("Update Transaction API response:", response.data);
+    return response.data;
+  } catch (error) {
+    console.error("Error updating transaction:", error);
+    throw error;
+  }
+};
+
+/**
+ * Delete a transaction by ID.
+ * @param {string} transactionId - The ID of the transaction to delete
+ * @returns {Promise} - Promise indicating the deletion status
+ */
+export const deleteTransaction = async (transactionId) => {
+  try {
+    const accessToken = localStorage.getItem("accessToken");
+
+    if (!accessToken) {
+      console.warn("No access token found for deleteTransaction");
+      return null;
+    }
+
+    const response = await apiClient.delete(
+      `${TRANSACTION_API_URL}/${transactionId}`,
+      {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${accessToken}`,
+        },
+      }
+    );
+
+    console.log("Delete Transaction API response:", response.data);
+    return response.data;
+  } catch (error) {
+    console.error("Error deleting transaction:", error);
+    throw error;
+  }
+};

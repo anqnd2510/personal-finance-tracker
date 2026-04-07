@@ -41,6 +41,7 @@ model Account {
 
   budgets       Budget[]
   transactions  Transaction[]
+  rules         Rule[]
 
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
@@ -56,6 +57,7 @@ model Category {
 
   budgets       Budget[]
   transactions  Transaction[]
+  rules         Rule[]
 
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
@@ -103,5 +105,25 @@ model Transaction {
   updatedAt DateTime @updatedAt
 
   @@map("Transaction")
+  @@schema("finance_app")
+}
+
+model Rule {
+  id                  String   @id @default(uuid())
+  accountId           String
+  name                String
+  descriptionContains String
+  categoryId          String
+  priority            Int      @default(100)
+  isActive            Boolean  @default(true)
+
+  account Account  @relation(fields: [accountId], references: [id])
+  category Category @relation(fields: [categoryId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([accountId, isActive, priority])
+  @@map("Rule")
   @@schema("finance_app")
 }

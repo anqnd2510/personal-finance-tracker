@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.updateTransaction = exports.getTransactionsByAccountId = exports.getTransactionById = exports.createTransaction = void 0;
+exports.deleteTransaction = exports.updateTransaction = exports.getTransactionsByAccountId = exports.getTransactionById = exports.createTransaction = void 0;
 const transaction_service_1 = require("../services/transaction.service");
 const httpStatus_1 = require("constants/httpStatus");
 const apiResponse_1 = require("../utils/apiResponse");
@@ -75,4 +75,20 @@ const updateTransaction = async (req, res, next) => {
     }
 };
 exports.updateTransaction = updateTransaction;
+const deleteTransaction = async (req, res, next) => {
+    try {
+        const { id } = req.params;
+        const userId = req.account?.accountId;
+        if (!userId) {
+            res.status(401).json({ message: "Unauthorized" });
+            return;
+        }
+        const response = await service.deleteTransaction(userId, id);
+        res.status(response.statusCode).json(response);
+    }
+    catch (err) {
+        next(err);
+    }
+};
+exports.deleteTransaction = deleteTransaction;
 //# sourceMappingURL=transaction.controller.js.map

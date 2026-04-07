@@ -8,6 +8,10 @@ export class TransactionRepository {
   async createTransaction(
     transactionData: ITransactionRequest
   ): Promise<ITransaction> {
+    if (!transactionData.categoryId) {
+      throw new Error("categoryId is required to create transaction");
+    }
+
     return await prisma.transaction.create({
       data: {
         accountId: transactionData.accountId,
@@ -58,7 +62,16 @@ export class TransactionRepository {
     });
   }
 
-  async deleteTransaction(id: string): Promise<ITransaction | null> {
+  async deleteTransaction(
+    id: string,
+    accountId: string
+  ): Promise<ITransaction | null> {
+    const existing = await this.findTransactionByIdAndAccountId(id, accountId);
+
+    if (!existing) {
+      return null;
+    }
+
     return await prisma.transaction.delete({
       where: { id },
     });

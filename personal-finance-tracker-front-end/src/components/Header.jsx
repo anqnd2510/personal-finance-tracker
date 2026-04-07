@@ -7,8 +7,12 @@ import {
 import { useState } from "react";
 import { Link } from "react-router-dom";
 
-const Header = ({ user, onMenuClick, onLogout }) => {
+const Header = ({ account, onMenuClick, onLogout }) => {
   const [dropdownOpen, setDropdownOpen] = useState(false);
+  const displayName =
+    [account?.firstName, account?.lastName].filter(Boolean).join(" ") ||
+    account?.email ||
+    "User";
 
   return (
     <header className="sticky top-0 z-30 flex h-16 items-center gap-x-4 border-b border-gray-200 bg-white px-4 shadow-sm sm:gap-x-6 sm:px-6 lg:px-8">
@@ -33,7 +37,7 @@ const Header = ({ user, onMenuClick, onLogout }) => {
             >
               <UserCircleIcon className="h-8 w-8 text-gray-400" />
               <span className="hidden lg:block">
-                {user?.firstName || "User"}
+                {displayName}
               </span>
               <ChevronDownIcon className="h-4 w-4" />
             </button>
@@ -42,9 +46,8 @@ const Header = ({ user, onMenuClick, onLogout }) => {
               <div className="absolute right-0 z-10 mt-2 w-48 origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5">
                 <div className="px-4 py-2 text-sm text-gray-700 border-b">
                   <p className="font-medium">
-                    {user?.firstName} {user?.lastName}
+                    {displayName}
                   </p>
-                  <p className="text-gray-500">{user?.email}</p>
                 </div>
                 <Link
                   to="/profile"

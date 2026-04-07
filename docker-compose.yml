@@ -74,6 +74,8 @@ services:
     restart: unless-stopped
     depends_on:
       - backend
+    environment:
+      FRONTEND_PUBLIC_URL: http://localhost:5173
     ports:
       - "5173:80"
 

@@ -20,7 +20,7 @@ const TransactionModal = ({
   useEffect(() => {
     if (transaction) {
       setFormData({
-        _id: transaction._id,
+        id: transaction.id || transaction._id,
         description: transaction.description,
         amount: Math.abs(transaction.amount).toString(),
         type: transaction.type,
@@ -60,9 +60,6 @@ const TransactionModal = ({
       Number.parseFloat(formData.amount) <= 0
     ) {
       newErrors.amount = "Số tiền phải là số dương";
-    }
-    if (!formData.categoryId) {
-      newErrors.categoryId = "Vui lòng chọn danh mục";
     }
     if (!formData.date) {
       newErrors.date = "Vui lòng chọn ngày";
@@ -229,10 +226,13 @@ const TransactionModal = ({
                     errors.categoryId ? "border-red-300" : "border-gray-300"
                   } rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm`}
                 >
-                  <option value="">Chọn danh mục</option>
+                  <option value="">Để trống để tự động gán theo rule</option>
                   {Array.isArray(categories) &&
                     categories.map((category) => (
-                      <option key={category._id} value={category._id}>
+                      <option
+                        key={category.id || category._id}
+                        value={category.id || category._id}
+                      >
                         {category.name}
                       </option>
                     ))}
@@ -242,6 +242,10 @@ const TransactionModal = ({
                     {errors.categoryId}
                   </p>
                 )}
+                <p className="mt-1 text-xs text-gray-500">
+                  Nếu mô tả khớp rule, hệ thống sẽ tự chọn category. Nếu không,
+                  bạn có thể chọn category thủ công.
+                </p>
               </div>
 
               {/* Date */}

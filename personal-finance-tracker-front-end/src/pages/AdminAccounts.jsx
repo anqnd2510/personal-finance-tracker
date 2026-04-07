@@ -96,14 +96,15 @@ const AdminAccounts = () => {
   const handleSaveAccount = async (accountData) => {
     try {
       if (currentAccount) {
+        const currentAccountId = currentAccount.id || currentAccount._id;
         // Update existing account
-        const response = await updateAccount(currentAccount._id, accountData);
+        const response = await updateAccount(currentAccountId, accountData);
 
         if (response && (response.isSuccess || response.data)) {
           const updatedAccount = response.data || response;
           setAccounts((prev) =>
             prev.map((acc) =>
-              acc._id === currentAccount._id ? updatedAccount : acc
+              (acc.id || acc._id) === currentAccountId ? updatedAccount : acc
             )
           );
         }
@@ -130,7 +131,7 @@ const AdminAccounts = () => {
         const response = await deleteAccount(id);
 
         if (response && response.isSuccess !== false) {
-          setAccounts((prev) => prev.filter((acc) => acc._id !== id));
+          setAccounts((prev) => prev.filter((acc) => (acc.id || acc._id) !== id));
         } else {
           setError("Không thể xóa tài khoản");
         }
@@ -149,7 +150,7 @@ const AdminAccounts = () => {
       if (response && (response.isSuccess || response.data)) {
         setAccounts((prev) =>
           prev.map((acc) =>
-            acc._id === id ? { ...acc, isActive: newStatus } : acc
+            (acc.id || acc._id) === id ? { ...acc, isActive: newStatus } : acc
           )
         );
       }

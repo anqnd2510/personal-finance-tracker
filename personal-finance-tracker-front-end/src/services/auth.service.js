@@ -111,3 +111,17 @@ export const register = async (userData) => {
     throw error;
   }
 };
+
+/**
+ * Logout current account and clear backend session.
+ * @returns {Promise} - Promise containing logout response
+ */
+export const logout = async () => {
+  try {
+    const response = await apiClient.post(`${AUTH_API_URL}/logout`);
+    return response.data;
+  } catch (error) {
+    console.error("Error in logout:", error);
+    throw error;
+  }
+};

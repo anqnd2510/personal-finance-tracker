@@ -5,7 +5,7 @@ export declare class TransactionRepository {
     findTransactionByIdAndAccountId(id: string, accountId: string): Promise<ITransaction | null>;
     findTransactionsByAccountId(accountId: string): Promise<ITransaction[]>;
     updateTransaction(id: string, accountId: string, updateData: Partial<ITransaction>): Promise<ITransaction | null>;
-    deleteTransaction(id: string): Promise<ITransaction | null>;
+    deleteTransaction(id: string, accountId: string): Promise<ITransaction | null>;
     getTotalSpentInPeriod(accountId: string, categoryId: string, startDate: Date, endDate: Date): Promise<number>;
     getCategorySpending(accountId: string, categoryId: string, startDate: Date, endDate: Date): Promise<number>;
     getMonthlySpending(accountId: string, startDate: Date, endDate: Date): Promise<number>;

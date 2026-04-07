@@ -3,15 +3,33 @@ import { ApiResponse } from "../utils/apiResponse";
 import { TransactionRepository } from "../repositories/transaction.repository";
 import { BudgetRepository } from "../repositories/budget.repository";
 import { ITransactionRequest } from "interfaces/transaction.interface";
+import { RuleService } from "./rule.service";
 
 export class TransactionService {
   constructor(
     private transactionRepo = new TransactionRepository(),
-    private budgetRepo = new BudgetRepository()
+    private budgetRepo = new BudgetRepository(),
+    private ruleService = new RuleService()
   ) {}
 
   async createTransaction(transactionData: ITransactionRequest) {
     try {
+      if (!transactionData.categoryId) {
+        const resolvedCategoryId = await this.ruleService.resolveCategoryFromRules(
+          transactionData.accountId,
+          transactionData.description
+        );
+
+        if (!resolvedCategoryId) {
+          return ApiResponse.error(
+            "categoryId is required when no matching rule is found",
+            HTTP_STATUS.BAD_REQUEST
+          );
+        }
+
+        transactionData.categoryId = resolvedCategoryId;
+      }
+
       const transaction = await this.transactionRepo.createTransaction(
         transactionData
       );
@@ -105,6 +123,45 @@ export class TransactionService {
       console.error("Error in updateTransaction method:", error);
       return ApiResponse.error(
         "Failed to update transaction",
+        HTTP_STATUS.INTERNAL_SERVER_ERROR
+      );
+    }
+  }
+
+  async deleteTransaction(accountId: string, id: string) {
+    try {
+      const existing = await this.transactionRepo.findTransactionByIdAndAccountId(
+        id,
+        accountId
+      );
+      if (!existing) {
+        return ApiResponse.error("Transaction not found", HTTP_STATUS.NOT_FOUND);
+      }
+
+      await this.budgetRepo.adjustBudgetAmount({
+        accountId: existing.accountId,
+        categoryId: existing.categoryId,
+        amount: -existing.amount,
+        type: existing.type,
+      });
+
+      const deleted = await this.transactionRepo.deleteTransaction(id, accountId);
+      if (!deleted) {
+        return ApiResponse.error(
+          "Failed to delete transaction",
+          HTTP_STATUS.INTERNAL_SERVER_ERROR
+        );
+      }
+
+      return ApiResponse.success(
+        deleted,
+        "Transaction deleted successfully",
+        HTTP_STATUS.OK
+      );
+    } catch (error) {
+      console.error("Error in deleteTransaction method:", error);
+      return ApiResponse.error(
+        "Failed to delete transaction",
         HTTP_STATUS.INTERNAL_SERVER_ERROR
       );
     }

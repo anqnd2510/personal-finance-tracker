@@ -12,7 +12,7 @@ const BudgetModal = ({ isOpen, onClose, onSave, budget, categories }) => {
   useEffect(() => {
     if (budget) {
       setFormData({
-        _id: budget._id,
+        id: budget.id || budget._id,
         categoryId: budget.categoryId,
         limitAmount: budget.limitAmount.toString(),
         period: budget.period || "monthly",
@@ -120,7 +120,10 @@ const BudgetModal = ({ isOpen, onClose, onSave, budget, categories }) => {
                   <option value="">Chọn danh mục</option>
                   {Array.isArray(categories) &&
                     categories.map((category) => (
-                      <option key={category._id} value={category._id}>
+                      <option
+                        key={category.id || category._id}
+                        value={category.id || category._id}
+                      >
                         {category.name}
                       </option>
                     ))}

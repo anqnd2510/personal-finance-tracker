@@ -4,6 +4,9 @@ exports.TransactionRepository = void 0;
 const database_1 = require("../config/database");
 class TransactionRepository {
     async createTransaction(transactionData) {
+        if (!transactionData.categoryId) {
+            throw new Error("categoryId is required to create transaction");
+        }
         return await database_1.prisma.transaction.create({
             data: {
                 accountId: transactionData.accountId,
@@ -40,7 +43,11 @@ class TransactionRepository {
             data: updateData,
         });
     }
-    async deleteTransaction(id) {
+    async deleteTransaction(id, accountId) {
+        const existing = await this.findTransactionByIdAndAccountId(id, accountId);
+        if (!existing) {
+            return null;
+        }
         return await database_1.prisma.transaction.delete({
             where: { id },
         });

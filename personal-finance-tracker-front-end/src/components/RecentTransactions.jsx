@@ -28,7 +28,7 @@ const RecentTransactions = ({ transactions = [] }) => {
           ) : (
             transactions.slice(0, 5).map((transaction) => (
               <div
-                key={transaction._id}
+                key={transaction.id || transaction._id}
                 className="flex items-center justify-between"
               >
                 <div className="flex items-center space-x-3">

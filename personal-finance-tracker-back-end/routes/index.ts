@@ -7,6 +7,7 @@ import analyticRoutes from "./analytic.route";
 import aiRoutes from "./ai.route";
 import insightRoutes from "./insight.route";
 import healthRoutes from "./health.route";
+import ruleRoutes from "./rule.route";
 const router = Router();
 
 router.use("/auths", accountRoutes);
@@ -24,5 +25,7 @@ router.use("/ai", aiRoutes);
 router.use("/insights", insightRoutes);
 
 router.use("/health", healthRoutes);
+
+router.use("/rules", ruleRoutes);
 
 export default router;

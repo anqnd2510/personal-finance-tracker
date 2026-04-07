@@ -10,7 +10,7 @@ export interface ITransactionRequest {
   accountId: string;
   amount: number;
   type: TransactionType;
-  categoryId: string;
+  categoryId?: string;
   date: Date;
   description?: string;
 }

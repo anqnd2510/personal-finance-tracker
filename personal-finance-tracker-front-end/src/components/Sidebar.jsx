@@ -4,7 +4,8 @@ import {
   HomeIcon,
   CreditCardIcon,
   ChartPieIcon,
-  BanknotesIcon, // Icon tiền bạc cho Budgets
+  BanknotesIcon, 
+  AdjustmentsHorizontalIcon,
   CogIcon,
   XMarkIcon,
   UsersIcon,
@@ -19,7 +20,8 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
   const baseNavigation = [
     { name: "Dashboard", href: "/dashboard", icon: HomeIcon },
     { name: "Transactions", href: "/transactions", icon: CreditCardIcon },
-    { name: "Budgets", href: "/budgets", icon: BanknotesIcon }, // Sử dụng BanknotesIcon
+    { name: "Budgets", href: "/budgets", icon: BanknotesIcon },
+    { name: "Rules", href: "/rules", icon: AdjustmentsHorizontalIcon },
     { name: "Analytics", href: "/analytics", icon: ChartPieIcon },
     { name: "Settings", href: "/settings", icon: CogIcon },
   ];
@@ -76,20 +78,12 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
                   </div>
                 </div>
                 <div className="flex-1 min-w-0">
-                  <p className="text-sm font-medium text-gray-900 truncate">
-                    {user.firstName} {user.lastName}
-                  </p>
-                  <div className="flex items-center space-x-2">
-                    <p className="text-xs text-gray-500 truncate">
-                      {user.email}
-                    </p>
-                    {isAdmin() && (
-                      <span className="inline-flex items-center px-1.5 py-0.5 rounded-full text-xs font-medium bg-purple-100 text-purple-800">
-                        <ShieldCheckIcon className="w-3 h-3 mr-1" />
-                        Admin
-                      </span>
-                    )}
-                  </div>
+                  {isAdmin() && (
+                    <span className="inline-flex items-center px-1.5 py-0.5 rounded-full text-xs font-medium bg-purple-100 text-purple-800">
+                      <ShieldCheckIcon className="w-3 h-3 mr-1" />
+                      Admin
+                    </span>
+                  )}
                 </div>
               </div>
             </div>
@@ -138,20 +132,12 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
                   </div>
                 </div>
                 <div className="flex-1 min-w-0">
-                  <p className="text-sm font-medium text-gray-900 truncate">
-                    {user.firstName} {user.lastName}
-                  </p>
-                  <div className="flex items-center space-x-2">
-                    <p className="text-xs text-gray-500 truncate">
-                      {user.email}
-                    </p>
-                    {isAdmin() && (
-                      <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-purple-100 text-purple-800">
-                        <ShieldCheckIcon className="w-3 h-3 mr-1" />
-                        Admin
-                      </span>
-                    )}
-                  </div>
+                  {isAdmin() && (
+                    <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-purple-100 text-purple-800">
+                      <ShieldCheckIcon className="w-3 h-3 mr-1" />
+                      Admin
+                    </span>
+                  )}
                 </div>
               </div>
             </div>

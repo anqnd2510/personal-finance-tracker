@@ -130,6 +130,29 @@ router.put(
 
 /**
  * @swagger
+ * /api/transactions/{id}:
+ *   delete:
+ *     summary: Delete a transaction by ID
+ *     tags: [Transactions]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: The ID of the transaction to delete
+ *     responses:
+ *       200:
+ *         description: Transaction deleted successfully
+ *       404:
+ *         description: Transaction not found
+ *       500:
+ *         description: Internal server error
+ */
+router.delete("/:id", authenticate, transactionController.deleteTransaction);
+
+/**
+ * @swagger
  * /api/transactions:
  *   get:
  *     summary: Get all transactions for the authenticated user

@@ -15,7 +15,10 @@ RUN npm run build
 FROM nginx:1.27-alpine AS runner
 
 COPY --from=builder /app/dist /usr/share/nginx/html
+COPY nginx.conf /etc/nginx/conf.d/default.conf
 
 EXPOSE 80
 
-CMD ["nginx", "-g", "daemon off;"]
+ENV FRONTEND_PUBLIC_URL=http://localhost:5173
+
+CMD ["sh", "-c", "echo 'Frontend is available at: '$FRONTEND_PUBLIC_URL && nginx -g 'daemon off;'"]

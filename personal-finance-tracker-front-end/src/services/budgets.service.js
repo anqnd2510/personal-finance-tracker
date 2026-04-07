@@ -104,8 +104,11 @@ export const updateBudget = async (budgetId, budgetData) => {
     }
 
     const response = await apiClient.put(
-      `${BUDGET_API_URL}/update-budget/${budgetId}`,
-      budgetData,
+      `${BUDGET_API_URL}/update-budget`,
+      {
+        ...budgetData,
+        budgetId,
+      },
       {
         headers: {
           "Content-Type": "application/json",

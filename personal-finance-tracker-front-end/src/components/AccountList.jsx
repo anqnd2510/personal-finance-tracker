@@ -171,7 +171,10 @@ const AccountList = ({ accounts, onEdit, onDelete, onToggleStatus }) => {
             </button>
             <button
               onClick={() =>
-                onToggleStatus(selectedAccount._id, selectedAccount.isActive)
+                onToggleStatus(
+                  selectedAccount.id || selectedAccount._id,
+                  selectedAccount.isActive
+                )
               }
               className={`inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 ${
                 selectedAccount.isActive
@@ -183,7 +186,7 @@ const AccountList = ({ accounts, onEdit, onDelete, onToggleStatus }) => {
             </button>
             <button
               onClick={() => {
-                onDelete(selectedAccount._id);
+                onDelete(selectedAccount.id || selectedAccount._id);
                 closeDetails();
               }}
               className="inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-red-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
@@ -246,7 +249,7 @@ const AccountList = ({ accounts, onEdit, onDelete, onToggleStatus }) => {
                   </tr>
                 ) : (
                   paginatedAccounts.map((account) => (
-                    <tr key={account._id} className="hover:bg-gray-50">
+                    <tr key={account.id || account._id} className="hover:bg-gray-50">
                       <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
                         {account.firstName} {account.lastName}
                       </td>
@@ -298,7 +301,7 @@ const AccountList = ({ accounts, onEdit, onDelete, onToggleStatus }) => {
                             />
                           </button>
                           <button
-                            onClick={() => onDelete(account._id)}
+                            onClick={() => onDelete(account.id || account._id)}
                             className="text-red-600 hover:text-red-900"
                             title="Xóa"
                           >

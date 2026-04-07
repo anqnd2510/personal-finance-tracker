@@ -7,6 +7,7 @@ import Transactions from "./pages/Transactions";
 import Budgets from "./pages/Budgets";
 import Analytics from "./pages/Analytics";
 import AdminAccounts from "./pages/AdminAccounts";
+import Rules from "./pages/Rules";
 import { PrivateRoute } from "./routes/PrivateRoute";
 import { AdminRoute } from "./routes/AdminRoute";
 import { useAuth } from "./contexts/AuthContext"; // Import useAuth hook
@@ -61,6 +62,15 @@ const App = () => {
             element={
               <PrivateRoute>
                 <Analytics />
+              </PrivateRoute>
+            }
+          />
+
+          <Route
+            path="/rules"
+            element={
+              <PrivateRoute>
+                <Rules />
               </PrivateRoute>
             }
           />

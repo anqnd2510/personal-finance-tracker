@@ -88,3 +88,24 @@ export const updateTransaction = async (
     next(err);
   }
 };
+
+export const deleteTransaction = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const { id } = req.params;
+    const userId = req.account?.accountId;
+
+    if (!userId) {
+      res.status(401).json({ message: "Unauthorized" });
+      return;
+    }
+
+    const response = await service.deleteTransaction(userId, id);
+    res.status(response.statusCode).json(response);
+  } catch (err) {
+    next(err);
+  }
+};

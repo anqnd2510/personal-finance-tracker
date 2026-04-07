@@ -139,7 +139,7 @@ const TransactionList = ({ transactions, categoryMap, onEdit, onDelete }) => {
             </button>
             <button
               onClick={() => {
-                onDelete(selectedTransaction._id);
+                onDelete(selectedTransaction.id || selectedTransaction._id);
                 closeDetails();
               }}
               className="inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-red-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
@@ -202,7 +202,7 @@ const TransactionList = ({ transactions, categoryMap, onEdit, onDelete }) => {
                   </tr>
                 ) : (
                   paginatedTransactions.map((transaction) => (
-                    <tr key={transaction._id} className="hover:bg-gray-50">
+                    <tr key={transaction.id || transaction._id} className="hover:bg-gray-50">
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                         {formatDate(transaction.date)}
                       </td>
@@ -253,7 +253,7 @@ const TransactionList = ({ transactions, categoryMap, onEdit, onDelete }) => {
                             />
                           </button>
                           <button
-                            onClick={() => onDelete(transaction._id)}
+                            onClick={() => onDelete(transaction.id || transaction._id)}
                             className="text-red-600 hover:text-red-900"
                           >
                             <TrashIcon className="h-5 w-5" aria-hidden="true" />

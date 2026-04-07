@@ -57,7 +57,7 @@ const Budgets = () => {
           // Create category mapping for quick lookup
           const mapping = {};
           categoriesResponse.data.forEach((category) => {
-            mapping[category._id] = category.name;
+            mapping[category.id || category._id] = category.name;
           });
           setCategoryMap(mapping);
         } else {
@@ -95,14 +95,15 @@ const Budgets = () => {
 
   const handleSaveBudget = async (budgetData) => {
     try {
-      if (budgetData._id) {
+      const budgetId = budgetData.id || budgetData._id;
+      if (budgetId) {
         // Update existing budget
-        const response = await updateBudget(budgetData._id, budgetData);
+        const response = await updateBudget(budgetId, budgetData);
 
         if (response && (response.isSuccess || response.data)) {
           const updatedBudget = response.data || response;
           setBudgets((prev) =>
-            prev.map((b) => (b._id === budgetData._id ? updatedBudget : b))
+            prev.map((b) => ((b.id || b._id) === budgetId ? updatedBudget : b))
           );
         }
       } else {
@@ -128,7 +129,7 @@ const Budgets = () => {
         const response = await deleteBudget(id);
 
         if (response && response.isSuccess !== false) {
-          setBudgets((prev) => prev.filter((b) => b._id !== id));
+          setBudgets((prev) => prev.filter((b) => (b.id || b._id) !== id));
         } else {
           setError("Không thể xóa ngân sách");
         }
@@ -272,7 +273,7 @@ const Budgets = () => {
           <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
             {budgets.map((budget) => (
               <BudgetCard
-                key={budget._id}
+                key={budget.id || budget._id}
                 budget={budget}
                 categoryName={
                   categoryMap[budget.categoryId] || "Chưa phân loại"

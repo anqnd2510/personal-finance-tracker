@@ -17,7 +17,7 @@ const AccountModal = ({ isOpen, onClose, onSave, account }) => {
   useEffect(() => {
     if (account) {
       setFormData({
-        _id: account._id,
+        id: account.id || account._id,
         firstName: account.firstName || "",
         lastName: account.lastName || "",
         email: account.email || "",
