@@ -20,6 +20,11 @@ class BudgetRepository {
             where: { id },
         });
     }
+    async findBudgetByIdAndAccountId(id, accountId) {
+        return await database_1.prisma.budget.findFirst({
+            where: { id, accountId },
+        });
+    }
     async findBudgetsByAccountId(accountId) {
         return await database_1.prisma.budget.findMany({
             where: { accountId },
@@ -34,13 +39,21 @@ class BudgetRepository {
             },
         });
     }
-    async updateBudget(id, updateData) {
+    async updateBudget(id, accountId, updateData) {
+        const existing = await this.findBudgetByIdAndAccountId(id, accountId);
+        if (!existing) {
+            return null;
+        }
         return await database_1.prisma.budget.update({
             where: { id },
             data: updateData,
         });
     }
-    async deleteBudget(id) {
+    async deleteBudget(id, accountId) {
+        const existing = await this.findBudgetByIdAndAccountId(id, accountId);
+        if (!existing) {
+            return null;
+        }
         return await database_1.prisma.budget.delete({
             where: { id },
         });

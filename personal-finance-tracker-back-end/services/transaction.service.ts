@@ -49,11 +49,15 @@ export class TransactionService {
   }
 
   async updateTransaction(
+    accountId: string,
     id: string,
     updateData: Partial<ITransactionRequest>
   ) {
     try {
-      const existing = await this.transactionRepo.findTransactionById(id);
+      const existing = await this.transactionRepo.findTransactionByIdAndAccountId(
+        id,
+        accountId
+      );
       if (!existing) {
         return ApiResponse.error(
           "Transaction not found",
@@ -70,6 +74,7 @@ export class TransactionService {
 
       const updated = await this.transactionRepo.updateTransaction(
         id,
+        accountId,
         updateData
       );
       if (!updated) {
@@ -154,9 +159,12 @@ export class TransactionService {
     };
   }
 
-  async getTransactionById(id: string) {
+  async getTransactionById(accountId: string, id: string) {
     try {
-      const transaction = await this.transactionRepo.findTransactionById(id);
+      const transaction = await this.transactionRepo.findTransactionByIdAndAccountId(
+        id,
+        accountId
+      );
       if (!transaction) {
         return ApiResponse.error(
           "Transaction not found",

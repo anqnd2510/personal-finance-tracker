@@ -30,9 +30,9 @@ class TransactionService {
             return apiResponse_1.ApiResponse.error("Failed to create transaction", httpStatus_1.HTTP_STATUS.INTERNAL_SERVER_ERROR);
         }
     }
-    async updateTransaction(id, updateData) {
+    async updateTransaction(accountId, id, updateData) {
         try {
-            const existing = await this.transactionRepo.findTransactionById(id);
+            const existing = await this.transactionRepo.findTransactionByIdAndAccountId(id, accountId);
             if (!existing) {
                 return apiResponse_1.ApiResponse.error("Transaction not found", httpStatus_1.HTTP_STATUS.NOT_FOUND);
             }
@@ -42,7 +42,7 @@ class TransactionService {
                 amount: -existing.amount,
                 type: existing.type,
             });
-            const updated = await this.transactionRepo.updateTransaction(id, updateData);
+            const updated = await this.transactionRepo.updateTransaction(id, accountId, updateData);
             if (!updated) {
                 return apiResponse_1.ApiResponse.error("Failed to update transaction", httpStatus_1.HTTP_STATUS.INTERNAL_SERVER_ERROR);
             }
@@ -93,9 +93,9 @@ class TransactionService {
             periodEnd,
         };
     }
-    async getTransactionById(id) {
+    async getTransactionById(accountId, id) {
         try {
-            const transaction = await this.transactionRepo.findTransactionById(id);
+            const transaction = await this.transactionRepo.findTransactionByIdAndAccountId(id, accountId);
             if (!transaction) {
                 return apiResponse_1.ApiResponse.error("Transaction not found", httpStatus_1.HTTP_STATUS.NOT_FOUND);
             }

@@ -11,8 +11,8 @@ export declare class TransactionService {
             id: string;
             createdAt: Date;
             updatedAt: Date;
-            accountId: string;
             type: import(".prisma/client").$Enums.TransactionType;
+            accountId: string;
             amount: number;
             categoryId: string;
             date: Date;
@@ -28,13 +28,13 @@ export declare class TransactionService {
             periodEnd: Date;
         } | undefined;
     }>>;
-    updateTransaction(id: string, updateData: Partial<ITransactionRequest>): Promise<ApiResponse<null> | ApiResponse<{
+    updateTransaction(accountId: string, id: string, updateData: Partial<ITransactionRequest>): Promise<ApiResponse<null> | ApiResponse<{
         transaction: {
             id: string;
             createdAt: Date;
             updatedAt: Date;
-            accountId: string;
             type: import(".prisma/client").$Enums.TransactionType;
+            accountId: string;
             amount: number;
             categoryId: string;
             date: Date;
@@ -51,12 +51,12 @@ export declare class TransactionService {
         } | undefined;
     }>>;
     private getBudgetStatus;
-    getTransactionById(id: string): Promise<ApiResponse<null> | ApiResponse<{
+    getTransactionById(accountId: string, id: string): Promise<ApiResponse<null> | ApiResponse<{
         id: string;
         createdAt: Date;
         updatedAt: Date;
-        accountId: string;
         type: import(".prisma/client").$Enums.TransactionType;
+        accountId: string;
         amount: number;
         categoryId: string;
         date: Date;
@@ -66,8 +66,8 @@ export declare class TransactionService {
         id: string;
         createdAt: Date;
         updatedAt: Date;
-        accountId: string;
         type: import(".prisma/client").$Enums.TransactionType;
+        accountId: string;
         amount: number;
         categoryId: string;
         date: Date;

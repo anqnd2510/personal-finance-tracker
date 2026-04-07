@@ -81,7 +81,7 @@ router.post(
  *       500:
  *         description: Internal server error
  */
-router.get("/:id", transactionController.getTransactionById);
+router.get("/:id", authenticate, transactionController.getTransactionById);
 
 /**
  * @swagger
@@ -122,7 +122,11 @@ router.get("/:id", transactionController.getTransactionById);
  *                 type: string
  *                 example: Updated monthly salary
  */
-router.put("/update-transaction/:id", transactionController.updateTransaction);
+router.put(
+  "/update-transaction/:id",
+  authenticate,
+  transactionController.updateTransaction
+);
 
 /**
  * @swagger

@@ -29,6 +29,15 @@ export class BudgetRepository {
     });
   }
 
+  async findBudgetByIdAndAccountId(
+    id: string,
+    accountId: string
+  ): Promise<IBudget | null> {
+    return await prisma.budget.findFirst({
+      where: { id, accountId },
+    });
+  }
+
   async findBudgetsByAccountId(accountId: string): Promise<IBudgetWithCategory[]> {
     return await prisma.budget.findMany({
       where: { accountId },
@@ -50,15 +59,28 @@ export class BudgetRepository {
 
   async updateBudget(
     id: string,
+    accountId: string,
     updateData: Partial<IBudget>
   ): Promise<IBudget | null> {
+    const existing = await this.findBudgetByIdAndAccountId(id, accountId);
+
+    if (!existing) {
+      return null;
+    }
+
     return await prisma.budget.update({
       where: { id },
       data: updateData,
     });
   }
 
-  async deleteBudget(id: string): Promise<IBudget | null> {
+  async deleteBudget(id: string, accountId: string): Promise<IBudget | null> {
+    const existing = await this.findBudgetByIdAndAccountId(id, accountId);
+
+    if (!existing) {
+      return null;
+    }
+
     return await prisma.budget.delete({
       where: { id },
     });

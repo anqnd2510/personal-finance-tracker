@@ -12,6 +12,7 @@ export const createTransaction = async (
     const transactionData = req.body;
     if (!req.account || !req.account.accountId) {
       res.status(401).json({ message: "Unauthorized" });
+      return;
     }
     const userId = req.account?.accountId;
     transactionData.accountId = userId;
@@ -34,7 +35,14 @@ export const getTransactionById = async (
 ) => {
   try {
     const { id } = req.params;
-    const response = await service.getTransactionById(id);
+    const userId = req.account?.accountId;
+
+    if (!userId) {
+      res.status(401).json({ message: "Unauthorized" });
+      return;
+    }
+
+    const response = await service.getTransactionById(userId, id);
     res.status(response.statusCode).json(response);
   } catch (err) {
     next(err);
@@ -67,7 +75,14 @@ export const updateTransaction = async (
   try {
     const { id } = req.params;
     const updateData = req.body;
-    const response = await service.updateTransaction(id, updateData);
+    const userId = req.account?.accountId;
+
+    if (!userId) {
+      res.status(401).json({ message: "Unauthorized" });
+      return;
+    }
+
+    const response = await service.updateTransaction(userId, id, updateData);
     res.status(response.statusCode).json(response);
   } catch (err) {
     next(err);

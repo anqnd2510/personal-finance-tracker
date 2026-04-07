@@ -15,7 +15,7 @@ export declare class BudgetService {
         limitAmount: number;
         periodStartDate: Date;
     }>>;
-    getBudgetById(id: string): Promise<ApiResponse<null> | ApiResponse<{
+    getBudgetById(accountId: string, id: string): Promise<ApiResponse<null> | ApiResponse<{
         id: string;
         createdAt: Date;
         updatedAt: Date;
@@ -27,7 +27,7 @@ export declare class BudgetService {
         periodStartDate: Date;
     }>>;
     getBudgetsByAccountId(accountId: string): Promise<ApiResponse<null> | ApiResponse<import("../interfaces/budget.interface").IBudgetWithCategory[]>>;
-    updateBudget(id: string, updateData: Partial<IBudgetRequest>): Promise<ApiResponse<null> | ApiResponse<{
+    updateBudget(accountId: string, id: string, updateData: Partial<IBudgetRequest>): Promise<ApiResponse<null> | ApiResponse<{
         id: string;
         createdAt: Date;
         updatedAt: Date;
@@ -38,7 +38,7 @@ export declare class BudgetService {
         limitAmount: number;
         periodStartDate: Date;
     }>>;
-    deleteBudget(id: string): Promise<ApiResponse<null> | ApiResponse<{
+    deleteBudget(accountId: string, id: string): Promise<ApiResponse<null> | ApiResponse<{
         id: string;
         createdAt: Date;
         updatedAt: Date;

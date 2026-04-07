@@ -36,7 +36,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = require("express");
 const aiController = __importStar(require("../controllers/ai.controller"));
 const authenticate_1 = require("../middlewares/authenticate");
+const rateLimiter_1 = require("../middlewares/rateLimiter");
 const router = (0, express_1.Router)();
-router.post("/chat", authenticate_1.authenticate, aiController.chatWithAI);
+router.post("/chat", rateLimiter_1.aiRateLimiter, authenticate_1.authenticate, aiController.chatWithAI);
 exports.default = router;
 //# sourceMappingURL=ai.route.js.map

@@ -20,12 +20,21 @@ class TransactionRepository {
             where: { id },
         });
     }
+    async findTransactionByIdAndAccountId(id, accountId) {
+        return await database_1.prisma.transaction.findFirst({
+            where: { id, accountId },
+        });
+    }
     async findTransactionsByAccountId(accountId) {
         return await database_1.prisma.transaction.findMany({
             where: { accountId },
         });
     }
-    async updateTransaction(id, updateData) {
+    async updateTransaction(id, accountId, updateData) {
+        const existing = await this.findTransactionByIdAndAccountId(id, accountId);
+        if (!existing) {
+            return null;
+        }
         return await database_1.prisma.transaction.update({
             where: { id },
             data: updateData,

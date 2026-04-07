@@ -39,9 +39,12 @@ export class BudgetService {
    * @param {string} id - The ID of the budget.
    * @returns {Promise<ApiResponse>} - A promise that resolves to an ApiResponse object.
    */
-  async getBudgetById(id: string) {
+  async getBudgetById(accountId: string, id: string) {
     try {
-      const budget = await this.budgetRepo.findBudgetById(id);
+      const budget = await this.budgetRepo.findBudgetByIdAndAccountId(
+        id,
+        accountId
+      );
       if (!budget) {
         return ApiResponse.error("Budget not found", HTTP_STATUS.NOT_FOUND);
       }
@@ -88,9 +91,17 @@ export class BudgetService {
    * @param {Partial<IBudgetRequest>} updateData - The data to update the budget with.
    * @returns {Promise<ApiResponse>} - A promise that resolves to an ApiResponse object.
    */
-  async updateBudget(id: string, updateData: Partial<IBudgetRequest>) {
+  async updateBudget(
+    accountId: string,
+    id: string,
+    updateData: Partial<IBudgetRequest>
+  ) {
     try {
-      const updatedBudget = await this.budgetRepo.updateBudget(id, updateData);
+      const updatedBudget = await this.budgetRepo.updateBudget(
+        id,
+        accountId,
+        updateData
+      );
       if (!updatedBudget) {
         return ApiResponse.error("Budget not found", HTTP_STATUS.NOT_FOUND);
       }
@@ -112,9 +123,9 @@ export class BudgetService {
    * @param {string} id - The ID of the budget.
    * @returns {Promise<ApiResponse>} - A promise that resolves to an ApiResponse object.
    */
-  async deleteBudget(id: string) {
+  async deleteBudget(accountId: string, id: string) {
     try {
-      const deletedBudget = await this.budgetRepo.deleteBudget(id);
+      const deletedBudget = await this.budgetRepo.deleteBudget(id, accountId);
       if (!deletedBudget) {
         return ApiResponse.error("Budget not found", HTTP_STATUS.NOT_FOUND);
       }

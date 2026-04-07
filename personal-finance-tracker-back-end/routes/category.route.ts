@@ -1,5 +1,6 @@
 import { Router } from "express";
 import * as categoryController from "../controllers/category.controller";
+import { authenticate } from "../middlewares/authenticate";
 const router = Router();
 /**
  * @swagger
@@ -41,7 +42,7 @@ const router = Router();
  *       500:
  *         description: Internal server error
  */
-router.post("/create-category", categoryController.createCategory);
+router.post("/create-category", authenticate, categoryController.createCategory);
 /**
  * @swagger
  * /api/categories/{id}:
@@ -115,7 +116,7 @@ router.get("/", categoryController.getAllCategories);
  *       500:
  *         description: Internal server error
  */
-router.put("/:id", categoryController.updateCategory);
+router.put("/:id", authenticate, categoryController.updateCategory);
 /**
  * @swagger
  * /api/categories/{id}:
@@ -137,6 +138,6 @@ router.put("/:id", categoryController.updateCategory);
  *       500:
  *         description: Internal server error
  */
-router.delete("/:id", categoryController.deleteCategory);
+router.delete("/:id", authenticate, categoryController.deleteCategory);
 
 export default router;

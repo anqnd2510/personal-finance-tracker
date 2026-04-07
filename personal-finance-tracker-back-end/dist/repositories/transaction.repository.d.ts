@@ -2,8 +2,9 @@ import { ITransaction, ITransactionRequest } from "../interfaces/transaction.int
 export declare class TransactionRepository {
     createTransaction(transactionData: ITransactionRequest): Promise<ITransaction>;
     findTransactionById(id: string): Promise<ITransaction | null>;
+    findTransactionByIdAndAccountId(id: string, accountId: string): Promise<ITransaction | null>;
     findTransactionsByAccountId(accountId: string): Promise<ITransaction[]>;
-    updateTransaction(id: string, updateData: Partial<ITransaction>): Promise<ITransaction | null>;
+    updateTransaction(id: string, accountId: string, updateData: Partial<ITransaction>): Promise<ITransaction | null>;
     deleteTransaction(id: string): Promise<ITransaction | null>;
     getTotalSpentInPeriod(accountId: string, categoryId: string, startDate: Date, endDate: Date): Promise<number>;
     getCategorySpending(accountId: string, categoryId: string, startDate: Date, endDate: Date): Promise<number>;

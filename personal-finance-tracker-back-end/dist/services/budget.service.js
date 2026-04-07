@@ -21,9 +21,9 @@ class BudgetService {
             return apiResponse_1.ApiResponse.error("Failed to create budget", httpStatus_1.HTTP_STATUS.INTERNAL_SERVER_ERROR);
         }
     }
-    async getBudgetById(id) {
+    async getBudgetById(accountId, id) {
         try {
-            const budget = await this.budgetRepo.findBudgetById(id);
+            const budget = await this.budgetRepo.findBudgetByIdAndAccountId(id, accountId);
             if (!budget) {
                 return apiResponse_1.ApiResponse.error("Budget not found", httpStatus_1.HTTP_STATUS.NOT_FOUND);
             }
@@ -47,9 +47,9 @@ class BudgetService {
             return apiResponse_1.ApiResponse.error("Failed to retrieve budgets", httpStatus_1.HTTP_STATUS.INTERNAL_SERVER_ERROR);
         }
     }
-    async updateBudget(id, updateData) {
+    async updateBudget(accountId, id, updateData) {
         try {
-            const updatedBudget = await this.budgetRepo.updateBudget(id, updateData);
+            const updatedBudget = await this.budgetRepo.updateBudget(id, accountId, updateData);
             if (!updatedBudget) {
                 return apiResponse_1.ApiResponse.error("Budget not found", httpStatus_1.HTTP_STATUS.NOT_FOUND);
             }
@@ -60,9 +60,9 @@ class BudgetService {
             return apiResponse_1.ApiResponse.error("Failed to update budget", httpStatus_1.HTTP_STATUS.INTERNAL_SERVER_ERROR);
         }
     }
-    async deleteBudget(id) {
+    async deleteBudget(accountId, id) {
         try {
-            const deletedBudget = await this.budgetRepo.deleteBudget(id);
+            const deletedBudget = await this.budgetRepo.deleteBudget(id, accountId);
             if (!deletedBudget) {
                 return apiResponse_1.ApiResponse.error("Budget not found", httpStatus_1.HTTP_STATUS.NOT_FOUND);
             }

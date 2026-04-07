@@ -10,6 +10,7 @@ export const createBudget = async (
     const budgetData = req.body;
     if (!req.account || !req.account.accountId) {
       res.status(401).json({ message: "Unauthorized" });
+      return;
     }
     const userId = req.account?.accountId;
     budgetData.accountId = userId;
@@ -26,7 +27,14 @@ export const getBudgetById = async (
 ) => {
   try {
     const { id } = req.params;
-    const response = await service.getBudgetById(id);
+    const userId = req.account?.accountId;
+
+    if (!userId) {
+      res.status(401).json({ message: "User not authenticated" });
+      return;
+    }
+
+    const response = await service.getBudgetById(userId, id);
     res.status(response.statusCode).json(response);
   } catch (err) {
     next(err);
@@ -55,9 +63,21 @@ export const updateBudget = async (
   next: NextFunction
 ) => {
   try {
-    const { id } = req.params;
+    const userId = req.account?.accountId;
+    const id = req.params.id || req.body.budgetId || req.body.id;
     const updateData = req.body;
-    const response = await service.updateBudget(id, updateData);
+
+    if (!userId) {
+      res.status(401).json({ message: "User not authenticated" });
+      return;
+    }
+
+    if (!id) {
+      res.status(400).json({ message: "Budget id is required" });
+      return;
+    }
+
+    const response = await service.updateBudget(userId, id, updateData);
     res.status(response.statusCode).json(response);
   } catch (err) {
     next(err);
@@ -70,7 +90,14 @@ export const deleteBudget = async (
 ) => {
   try {
     const { id } = req.params;
-    const response = await service.deleteBudget(id);
+    const userId = req.account?.accountId;
+
+    if (!userId) {
+      res.status(401).json({ message: "User not authenticated" });
+      return;
+    }
+
+    const response = await service.deleteBudget(userId, id);
     res.status(response.statusCode).json(response);
   } catch (err) {
     next(err);

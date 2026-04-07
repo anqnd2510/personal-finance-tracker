@@ -26,6 +26,15 @@ export class TransactionRepository {
     });
   }
 
+  async findTransactionByIdAndAccountId(
+    id: string,
+    accountId: string
+  ): Promise<ITransaction | null> {
+    return await prisma.transaction.findFirst({
+      where: { id, accountId },
+    });
+  }
+
   async findTransactionsByAccountId(accountId: string): Promise<ITransaction[]> {
     return await prisma.transaction.findMany({
       where: { accountId },
@@ -34,8 +43,15 @@ export class TransactionRepository {
 
   async updateTransaction(
     id: string,
+    accountId: string,
     updateData: Partial<ITransaction>
   ): Promise<ITransaction | null> {
+    const existing = await this.findTransactionByIdAndAccountId(id, accountId);
+
+    if (!existing) {
+      return null;
+    }
+
     return await prisma.transaction.update({
       where: { id },
       data: updateData,

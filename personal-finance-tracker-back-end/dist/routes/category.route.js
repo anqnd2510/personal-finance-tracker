@@ -35,11 +35,12 @@ var __importStar = (this && this.__importStar) || (function () {
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = require("express");
 const categoryController = __importStar(require("../controllers/category.controller"));
+const authenticate_1 = require("../middlewares/authenticate");
 const router = (0, express_1.Router)();
-router.post("/create-category", categoryController.createCategory);
+router.post("/create-category", authenticate_1.authenticate, categoryController.createCategory);
 router.get("/:id", categoryController.getCategoryById);
 router.get("/", categoryController.getAllCategories);
-router.put("/:id", categoryController.updateCategory);
-router.delete("/:id", categoryController.deleteCategory);
+router.put("/:id", authenticate_1.authenticate, categoryController.updateCategory);
+router.delete("/:id", authenticate_1.authenticate, categoryController.deleteCategory);
 exports.default = router;
 //# sourceMappingURL=category.route.js.map

@@ -54,13 +54,27 @@ class AccountController {
             }
             catch (error) {
                 console.error("Login controller error:", error);
+                const isSessionConflict = typeof error?.message === "string" &&
+                    error.message.includes("already logged in");
+                const statusCode = isSessionConflict
+                    ? httpStatus_1.HTTP_STATUS.CONFLICT
+                    : httpStatus_1.HTTP_STATUS.UNAUTHORIZED;
                 res
-                    .status(httpStatus_1.HTTP_STATUS.UNAUTHORIZED)
-                    .json(apiResponse_1.ApiResponse.error(error.message || "Login failed", 401));
+                    .status(statusCode)
+                    .json(apiResponse_1.ApiResponse.error(error.message || "Login failed", statusCode));
             }
         };
         this.logout = async (req, res) => {
             try {
+                const accountId = req.account?.accountId;
+                const sessionId = req.account?.sessionId;
+                if (!accountId) {
+                    res
+                        .status(httpStatus_1.HTTP_STATUS.UNAUTHORIZED)
+                        .json(apiResponse_1.ApiResponse.error("User not authenticated", 401));
+                    return;
+                }
+                await this.authService.logout(accountId, sessionId);
                 res.json(apiResponse_1.ApiResponse.success(null, "Logout successful"));
             }
             catch (error) {

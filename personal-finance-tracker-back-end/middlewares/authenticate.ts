@@ -43,7 +43,11 @@ export const authenticate = (
         return;
       }
     } catch (error) {
-      console.error("Session validation skipped due to Redis error:", error);
+      console.error("Session validation failed due to Redis error:", error);
+      res
+        .status(503)
+        .json(ApiResponse.error("Authentication service unavailable", 503));
+      return;
     }
 
     req.account = {

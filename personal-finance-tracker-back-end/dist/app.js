@@ -8,6 +8,7 @@ const cors_1 = __importDefault(require("cors"));
 const dotenv_1 = __importDefault(require("dotenv"));
 const swagger_1 = require("./docs/swagger");
 const index_1 = __importDefault(require("./routes/index"));
+const rateLimiter_1 = require("./middlewares/rateLimiter");
 dotenv_1.default.config();
 const app = (0, express_1.default)();
 app.use((0, cors_1.default)());
@@ -16,6 +17,6 @@ app.use(express_1.default.json());
 app.get("/", (req, res) => {
     res.json({ message: "Personal Finance Tracker API", status: "running" });
 });
-app.use("/api", index_1.default);
+app.use("/api", rateLimiter_1.globalApiLimiter, index_1.default);
 exports.default = app;
 //# sourceMappingURL=app.js.map

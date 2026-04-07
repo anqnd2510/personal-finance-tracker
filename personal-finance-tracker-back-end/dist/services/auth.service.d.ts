@@ -1,7 +1,11 @@
 import { ILoginRequest, IRegisterRequest, IAuthResponse, ITokenPayload } from "../interfaces/auth.interface";
 export declare class AuthService {
     private accountRepository;
+    private static readonly SESSION_KEY_PREFIX;
     constructor();
+    private getSessionKey;
+    private storeActiveSession;
+    logout(accountId: string, sessionId?: string): Promise<void>;
     register(registerData: IRegisterRequest): Promise<IAuthResponse>;
     login(loginData: ILoginRequest): Promise<IAuthResponse>;
     getCurrentUser(userId: string): Promise<{
