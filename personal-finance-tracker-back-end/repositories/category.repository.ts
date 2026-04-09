@@ -21,6 +21,17 @@ export class CategoryRepository {
     return await prisma.category.findMany();
   }
 
+  async findCategoryByName(name: string): Promise<ICategory | null> {
+    return await prisma.category.findFirst({
+      where: {
+        name: {
+          equals: name,
+          mode: "insensitive",
+        },
+      },
+    });
+  }
+
   async updateCategory(
     id: string,
     updateData: Partial<ICategory>

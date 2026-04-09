@@ -32,12 +32,18 @@ var __importStar = (this && this.__importStar) || (function () {
         return result;
     };
 })();
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = require("express");
 const transactionController = __importStar(require("../controllers/transaction.controller"));
 const authenticate_1 = require("../middlewares/authenticate");
+const multer_1 = __importDefault(require("multer"));
 const router = (0, express_1.Router)();
+const upload = (0, multer_1.default)({ storage: multer_1.default.memoryStorage() });
 router.post("/create-transaction", authenticate_1.authenticate, transactionController.createTransaction);
+router.post("/import-csv", authenticate_1.authenticate, upload.single("file"), transactionController.importTransactionsFromCsv);
 router.get("/:id", authenticate_1.authenticate, transactionController.getTransactionById);
 router.put("/update-transaction/:id", authenticate_1.authenticate, transactionController.updateTransaction);
 router.delete("/:id", authenticate_1.authenticate, transactionController.deleteTransaction);

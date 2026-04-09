@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.deleteTransaction = exports.updateTransaction = exports.getTransactionsByAccountId = exports.getTransactionById = exports.createTransaction = void 0;
+exports.importTransactionsFromCsv = exports.deleteTransaction = exports.updateTransaction = exports.getTransactionsByAccountId = exports.getTransactionById = exports.createTransaction = void 0;
 const transaction_service_1 = require("../services/transaction.service");
 const httpStatus_1 = require("constants/httpStatus");
 const apiResponse_1 = require("../utils/apiResponse");
@@ -91,4 +91,25 @@ const deleteTransaction = async (req, res, next) => {
     }
 };
 exports.deleteTransaction = deleteTransaction;
+const importTransactionsFromCsv = async (req, res, next) => {
+    try {
+        const userId = req.account?.accountId;
+        if (!userId) {
+            res.status(401).json({ message: "Unauthorized" });
+            return;
+        }
+        if (!req.file || !req.file.buffer) {
+            res
+                .status(httpStatus_1.HTTP_STATUS.BAD_REQUEST)
+                .json(apiResponse_1.ApiResponse.error("CSV file is required", httpStatus_1.HTTP_STATUS.BAD_REQUEST));
+            return;
+        }
+        const response = await service.importTransactionsFromCsv(userId, req.file.buffer);
+        res.status(response.statusCode).json(response);
+    }
+    catch (err) {
+        next(err);
+    }
+};
+exports.importTransactionsFromCsv = importTransactionsFromCsv;
 //# sourceMappingURL=transaction.controller.js.map

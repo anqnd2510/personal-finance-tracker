@@ -3,6 +3,7 @@ export declare class CategoryRepository {
     createCategory(categoryData: ICategoryRequest): Promise<ICategory>;
     findCategoryById(id: string): Promise<ICategory | null>;
     findAllCategories(): Promise<ICategory[]>;
+    findCategoryByName(name: string): Promise<ICategory | null>;
     updateCategory(id: string, updateData: Partial<ICategory>): Promise<ICategory | null>;
     deleteCategory(id: string): Promise<ICategory | null>;
 }

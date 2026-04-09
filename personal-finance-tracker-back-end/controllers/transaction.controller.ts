@@ -109,3 +109,33 @@ export const deleteTransaction = async (
     next(err);
   }
 };
+
+export const importTransactionsFromCsv = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const userId = req.account?.accountId;
+
+    if (!userId) {
+      res.status(401).json({ message: "Unauthorized" });
+      return;
+    }
+
+    if (!req.file || !req.file.buffer) {
+      res
+        .status(HTTP_STATUS.BAD_REQUEST)
+        .json(ApiResponse.error("CSV file is required", HTTP_STATUS.BAD_REQUEST));
+      return;
+    }
+
+    const response = await service.importTransactionsFromCsv(
+      userId,
+      req.file.buffer
+    );
+    res.status(response.statusCode).json(response);
+  } catch (err) {
+    next(err);
+  }
+};

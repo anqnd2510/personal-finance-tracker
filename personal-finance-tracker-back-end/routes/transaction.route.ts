@@ -1,7 +1,9 @@
 import { Router } from "express";
 import * as transactionController from "../controllers/transaction.controller";
 import { authenticate } from "../middlewares/authenticate";
+import multer from "multer";
 const router = Router();
+const upload = multer({ storage: multer.memoryStorage() });
 
 /**
  * @swagger
@@ -59,6 +61,44 @@ router.post(
   "/create-transaction",
   authenticate,
   transactionController.createTransaction
+);
+
+/**
+ * @swagger
+ * /api/transactions/import-csv:
+ *   post:
+ *     summary: Import multiple transactions from CSV
+ *     tags: [Transactions]
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         multipart/form-data:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - file
+ *             properties:
+ *               file:
+ *                 type: string
+ *                 format: binary
+ *                 description: CSV file with transaction rows
+ *     responses:
+ *       200:
+ *         description: CSV import completed
+ *       400:
+ *         description: Invalid CSV file or missing required fields
+ *       401:
+ *         description: Unauthorized
+ *       500:
+ *         description: Internal server error
+ */
+router.post(
+  "/import-csv",
+  authenticate,
+  upload.single("file"),
+  transactionController.importTransactionsFromCsv
 );
 /**
  * @swagger

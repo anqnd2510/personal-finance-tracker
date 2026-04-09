@@ -4,4 +4,5 @@ export declare const getTransactionById: (req: Request, res: Response, next: Nex
 export declare const getTransactionsByAccountId: (req: Request, res: Response, next: NextFunction) => Promise<void>;
 export declare const updateTransaction: (req: Request, res: Response, next: NextFunction) => Promise<void>;
 export declare const deleteTransaction: (req: Request, res: Response, next: NextFunction) => Promise<void>;
+export declare const importTransactionsFromCsv: (req: Request, res: Response, next: NextFunction) => Promise<void>;
 //# sourceMappingURL=transaction.controller.d.ts.map

@@ -19,6 +19,16 @@ class CategoryRepository {
     async findAllCategories() {
         return await database_1.prisma.category.findMany();
     }
+    async findCategoryByName(name) {
+        return await database_1.prisma.category.findFirst({
+            where: {
+                name: {
+                    equals: name,
+                    mode: "insensitive",
+                },
+            },
+        });
+    }
     async updateCategory(id, updateData) {
         return await database_1.prisma.category.update({
             where: { id },
